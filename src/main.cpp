@@ -15,7 +15,17 @@ int main(void) {
 	InitWindow(windowWidth, windowHeight, "The Fastest RPG");
 	SetTargetFPS(60);
 
-	int menu = 0;
+	int menu = 1;
+
+    Image grayGoblin = LoadImage("../Art/Enemies/GoblinwithStaff/GrayLayer.png");
+    ImageResize(&grayGoblin, 500, 500);
+    Texture2D tempTexture = LoadTextureFromImage(grayGoblin);
+    UnloadImage(grayGoblin);
+
+    Image backGoblin = LoadImage("../Art/Enemies/GoblinwithStaff/ColorLayer.png");
+    ImageResize(&backGoblin, 500, 500);
+    Texture2D tempTexture2 = LoadTextureFromImage(backGoblin);
+    UnloadImage(backGoblin);
 
 	while (!WindowShouldClose()) {
 		windowWidth = GetScreenWidth();
@@ -23,7 +33,7 @@ int main(void) {
 		BeginDrawing();
 		ClearBackground(background);
 
-		if (menu == 0) {
+		if (menu == 0 || IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)) {
 			int titleSpace = windowHeight / 3;
 			int titleFontSize = (int)(windowHeight * 0.15);
 			if ((windowWidth * 0.08) < titleFontSize) {
@@ -89,9 +99,10 @@ int main(void) {
 					 buttonFontSize,
 					 Color{70, 70, 70, 255});
 		} else if (menu == 1) {
-
-		}
-
+            ClearBackground(RAYWHITE);
+            DrawTexture(tempTexture, windowWidth/2 - tempTexture.width/2, windowHeight/2 - tempTexture.height/2, RED);
+            DrawTexture(tempTexture2, windowWidth/2 - tempTexture.width/2, windowHeight/2 - tempTexture.height/2, WHITE);
+        }
 		EndDrawing();
 	}
 
