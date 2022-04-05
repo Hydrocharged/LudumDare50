@@ -51,7 +51,7 @@ void State::NewGame() {
 	this->CurrentRun.PlayerCharacter.Runes[5] = Rune();
 
 	this->CurrentRun.PlayerCharacter.Runes[0].Name = "Physical Attack";
-	this->CurrentRun.PlayerCharacter.Runes[0].FlatDamage = 1000;
+	this->CurrentRun.PlayerCharacter.Runes[0].FlatDamage = 10;
 	this->CurrentRun.PlayerCharacter.Runes[0].AttackType = RuneAttribute::Physical;
 	this->CurrentRun.PlayerCharacter.Runes[0].Target = RuneAttribute::SingleEnemy;
 
