@@ -42,7 +42,7 @@ void Label::Draw(Context& ctx) {
 		Y() + (Height(ctx) / 2) - (fontSize / 2),
 		fontSize,
 		color);
-	for (auto child : *children) {
+	for (auto child: *children) {
 		child->DrawComponent(ctx, X() + ((Width(ctx) / 2) - (child->Width(ctx) / 2)), Y() + ((Height(ctx) / 2) - (child->Height(ctx) / 2)));
 	}
 }

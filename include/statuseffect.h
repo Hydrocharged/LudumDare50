@@ -35,19 +35,21 @@ public:
 	bool IsTarget(Context& ctx, Character& character) { return &Target == &character; }
 	bool IsBuff(Context& ctx) { return StatusEffect.IsBuff(ctx); }
 	bool ShouldRemoveInstance(Context& ctx) { return TurnsRemaining != -1 && TurnsRemaining <= 0; }
+	void TurnEnded(Context& ctx, Character& character) {
+		if (TurnsRemaining > 0 && ((IsCaster(ctx, character) && IsBuff(ctx)) || (IsTarget(ctx, character) && !IsBuff(ctx)))) {
+			TurnsRemaining -= 1;
+		}
+	}
 
 	StatusEffect& StatusEffect;
 	Character& Target;
 	Character& Caster;
-	int TurnsRemaining{};
+	int TurnsRemaining;
 };
 
 class BuffLifesteal : public StatusEffect {
 public:
-	BuffLifesteal(double strength) {
-		TurnCounter = 0;
-		Strength = strength/2;
-	};
+	BuffLifesteal(Context& ctx, double strength, int turns) : Strength(strength), Turns(turns) {}
 
 	StatusEffectInstance* GetInstance(Context& ctx, Character& target, Character& caster) override;
 	void PreAttack(Context& ctx, CharacterInstance& character, StatusEffectInstance& instance) override;
@@ -58,16 +60,13 @@ public:
 	std::string Description(Context& ctx) override;
 	bool IsBuff(Context& ctx) override;
 
-	int TurnCounter;
 	double Strength;
+	int Turns;
 };
 
 class BuffLucky : public StatusEffect {
 public:
-	BuffLucky(double critChance){
-		TurnCounter = 0;
-		CritChance = critChance; //100;
-	};
+	BuffLucky(Context& ctx, double critChance, int turns) : CritChance(critChance), Turns(turns) {}
 
 	StatusEffectInstance* GetInstance(Context& ctx, Character& target, Character& caster) override;
 	void PreAttack(Context& ctx, CharacterInstance& character, StatusEffectInstance& instance) override;
@@ -78,16 +77,13 @@ public:
 	std::string Description(Context& ctx) override;
 	bool IsBuff(Context& ctx) override;
 
-	int TurnCounter;
 	double CritChance;
+	int Turns;
 };
 
 class BuffAdrenaline : public StatusEffect {
 public:
-	BuffAdrenaline (double attackBoost) {
-		TurnCounter = 0;
-		AttackBoost = attackBoost/2;
-	};
+	BuffAdrenaline(Context& ctx, double strength, int turns) : Strength(strength), Turns(turns) {}
 
 	StatusEffectInstance* GetInstance(Context& ctx, Character& target, Character& caster) override;
 	void PreAttack(Context& ctx, CharacterInstance& character, StatusEffectInstance& instance) override;
@@ -98,17 +94,13 @@ public:
 	std::string Description(Context& ctx) override;
 	bool IsBuff(Context& ctx) override;
 
-	int TurnCounter;
-	double AttackBoost;
+	double Strength;
+	int Turns;
 };
 
 class BuffElemental : public StatusEffect {
 public:
-	BuffElemental( double resistanceBoost) {
-		TurnCounter = 0;
-		chosenType = 0;
-		ResistanceBoost = resistanceBoost;
-	};
+	BuffElemental(Context& ctx, RuneAttribute::Element element, double resistance, int turns) : Element(element), Resistance(resistance), Turns(turns) {}
 
 	StatusEffectInstance* GetInstance(Context& ctx, Character& target, Character& caster) override;
 	void PreAttack(Context& ctx, CharacterInstance& character, StatusEffectInstance& instance) override;
@@ -119,17 +111,14 @@ public:
 	std::string Description(Context& ctx) override;
 	bool IsBuff(Context& ctx) override;
 
-	int TurnCounter;
-	int chosenType;
-	double ResistanceBoost;
+	RuneAttribute::Element Element;
+	double Resistance;
+	int Turns;
 };
 
 class DebuffPoison : public StatusEffect {
 public:
-	DebuffPoison(double poisonDmg) {
-		TurnCounter = 0;
-		PoisonDmg = 10;
-	};
+	DebuffPoison(Context& ctx, double strength, int turns) : Strength(strength), Turns(turns) {}
 
 	StatusEffectInstance* GetInstance(Context& ctx, Character& target, Character& caster) override;
 	void PreAttack(Context& ctx, CharacterInstance& character, StatusEffectInstance& instance) override;
@@ -140,16 +129,13 @@ public:
 	std::string Description(Context& ctx) override;
 	bool IsBuff(Context& ctx) override;
 
-	int TurnCounter;
-	int PoisonDmg;
+	double Strength;
+	int Turns;
 };
 
 class DebuffBleed : public StatusEffect {
 public:
-	DebuffBleed(double bleedDmg) {
-		TurnCounter = 0;
-		BleedDmg = bleedDmg;
-	};
+	DebuffBleed(Context& ctx, double strength, int turns) : Strength(strength), Turns(turns) {}
 
 	StatusEffectInstance* GetInstance(Context& ctx, Character& target, Character& caster) override;
 	void PreAttack(Context& ctx, CharacterInstance& character, StatusEffectInstance& instance) override;
@@ -160,16 +146,13 @@ public:
 	std::string Description(Context& ctx) override;
 	bool IsBuff(Context& ctx) override;
 
-	int TurnCounter;
-	int BleedDmg;
+	double Strength;
+	int Turns;
 };
 
 class DebuffSleep : public StatusEffect {
 public:
-	DebuffSleep() {
-		TurnCounter = 0;
-		asleep = false;
-	};
+	DebuffSleep(Context& ctx, int turns) : Turns(turns) {}
 
 	StatusEffectInstance* GetInstance(Context& ctx, Character& target, Character& caster) override;
 	void PreAttack(Context& ctx, CharacterInstance& character, StatusEffectInstance& instance) override;
@@ -180,16 +163,12 @@ public:
 	std::string Description(Context& ctx) override;
 	bool IsBuff(Context& ctx) override;
 
-	int TurnCounter;
-	bool asleep;
+	int Turns;
 };
 
 class DebuffSick : public StatusEffect {
 public:
-	DebuffSick(double sickMult) {
-		TurnCounter = 0;
-		SickMult = sickMult;
-	};
+	DebuffSick(Context& ctx, double strength, int turns) : Strength(strength), Turns(turns) {}
 
 	StatusEffectInstance* GetInstance(Context& ctx, Character& target, Character& caster) override;
 	void PreAttack(Context& ctx, CharacterInstance& character, StatusEffectInstance& instance) override;
@@ -200,8 +179,8 @@ public:
 	std::string Description(Context& ctx) override;
 	bool IsBuff(Context& ctx) override;
 
-	int TurnCounter;
-	double SickMult = .15;
+	double Strength;
+	int Turns;
 };
 
 #endif //STATUSEFFECT_H

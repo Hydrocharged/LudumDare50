@@ -8,11 +8,15 @@
 #define CONTEXT_H
 #include "raylib/raylib.h"
 #include "vector"
+#include "string"
 
 // GetRandomDouble returns a double between 0.0 and 1.0 inclusive.
 double GetRandomDouble();
+std::string GetRuneName();
+std::string GetEnemyName();
 
 class Component;
+
 class State;
 
 class Context {
@@ -39,7 +43,7 @@ public:
 		};
 		void Set(Index menuIndex) { currentMenu = menuIndex; }
 		Index Current() { return currentMenu; }
-		Component* operator [](Index idx) { return menus.at(idx); }
+		Component* operator[](Index idx) { return menus.at(idx); }
 
 		void ReloadGameOverMenu(Context& ctx);
 		void ReloadCombatMenu(Context& ctx);

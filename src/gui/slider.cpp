@@ -41,7 +41,7 @@ void Slider::Update(Context& ctx) {
 			*trackedValue = (float)(mouseX - startX) / (float)(endX - startX);
 		}
 	}
-	for (auto child : *children) {
+	for (auto child: *children) {
 		child->Update(ctx);
 	}
 }
@@ -60,10 +60,10 @@ void Slider::Draw(Context& ctx) {
 		tabSize = width;
 	}
 	int moveableLength = width - tabSize;
-	int tabX = X() + + (int)((float)moveableLength * (*trackedValue));
+	int tabX = X() + +(int)((float)moveableLength * (*trackedValue));
 	int tabY = Y() + (height / 2) - (tabSize / 2);
 	DrawRectangle(tabX, tabY, tabSize, tabSize, trackColor);
-	for (auto child : *children) {
+	for (auto child: *children) {
 		child->DrawComponent(ctx, tabX + trackThickness, tabY + trackThickness);
 	}
 }
@@ -98,7 +98,7 @@ void SliderTab::Draw(Context& ctx) {
 	}
 	int innerTabSize = Height(ctx);
 	DrawRectangle(X(), Y(), innerTabSize, innerTabSize, color);
-	for (auto child : *children) {
+	for (auto child: *children) {
 		child->DrawComponent(ctx, X() + ((Width(ctx) / 2) - (child->Width(ctx) / 2)), Y() + ((Height(ctx) / 2) - (child->Height(ctx) / 2)));
 	}
 }

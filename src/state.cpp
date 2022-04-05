@@ -11,12 +11,12 @@
 State::State(Context& ctx) : ctx(ctx) {}
 
 State::~State() {
-	for (auto enemy : CurrentBattle.Enemies) {
-		delete(enemy);
+	for (auto enemy: CurrentBattle.Enemies) {
+		delete (enemy);
 	}
 	CurrentBattle.Enemies.clear();
-	for (auto statusEffect : CurrentBattle.StatusEffects) {
-		delete(statusEffect);
+	for (auto statusEffect: CurrentBattle.StatusEffects) {
+		delete (statusEffect);
 	}
 }
 
@@ -51,7 +51,7 @@ void State::NewGame() {
 	this->CurrentRun.PlayerCharacter.Runes[5] = Rune();
 
 	this->CurrentRun.PlayerCharacter.Runes[0].Name = "Physical Attack";
-	this->CurrentRun.PlayerCharacter.Runes[0].FlatDamage = 10;
+	this->CurrentRun.PlayerCharacter.Runes[0].FlatDamage = 1000;
 	this->CurrentRun.PlayerCharacter.Runes[0].AttackType = RuneAttribute::Physical;
 	this->CurrentRun.PlayerCharacter.Runes[0].Target = RuneAttribute::SingleEnemy;
 
@@ -109,12 +109,12 @@ void spawnEnemies(Context& ctx) {
 	if (!ctx.GameState->CurrentBattle.Enemies.empty()) {
 		ctx.GameState->CurrentRun.ProgressTime = ctx.GameState->CurrentBattle.Enemies[0]->EncounterTime;
 	}
-	for (auto enemy : ctx.GameState->CurrentBattle.Enemies) {
-		delete(enemy);
+	for (auto enemy: ctx.GameState->CurrentBattle.Enemies) {
+		delete (enemy);
 	}
 	ctx.GameState->CurrentBattle.Enemies.clear();
-	for (auto statusEffect : ctx.GameState->CurrentBattle.StatusEffects) {
-		delete(statusEffect);
+	for (auto statusEffect: ctx.GameState->CurrentBattle.StatusEffects) {
+		delete (statusEffect);
 	}
 	ctx.GameState->CurrentBattle.StatusEffects.clear();
 	ctx.GameState->CurrentBattle.EnemyTurnSpeeds.clear();
@@ -187,7 +187,7 @@ void State::NextRoom() {
 				ctx.GameState->CurrentRun.PlayerCharacter.CurrentHealth = ctx.GameState->CurrentRun.PlayerCharacter.Health;
 				probability = GetRandomDouble();
 				ChanceProgress.NextRuneLegendary += Chances::RarityLegendary;
-				delete(ctx.GameState->CurrentRun.AddingRune);
+				//delete (ctx.GameState->CurrentRun.AddingRune);
 				if (probability <= ChanceProgress.NextRuneLegendary) {
 					ChanceProgress.NextRuneLegendary = 0;
 					ctx.GameState->CurrentRun.AddingRune = new Rune(ctx, RuneAttribute::Legendary);
@@ -234,14 +234,14 @@ void State::NextRoom() {
 }
 
 void calculateAttack(Context& ctx, CharacterInstance& attacker, CharacterInstance& defender, double damage, RuneAttribute::AttackType attackType, RuneAttribute::Element element) {
-	for (auto statusEffects : ctx.GameState->CurrentBattle.StatusEffects) {
+	for (auto statusEffects: ctx.GameState->CurrentBattle.StatusEffects) {
 		statusEffects->PreAttack(ctx, attacker);
 	}
-	for (auto statusEffects : ctx.GameState->CurrentBattle.StatusEffects) {
+	for (auto statusEffects: ctx.GameState->CurrentBattle.StatusEffects) {
 		statusEffects->PreHit(ctx, defender);
 	}
 	if (element != RuneAttribute::Pure) {
-		switch(attackType) {
+		switch (attackType) {
 			case RuneAttribute::Physical:
 				damage *= attacker.PhysicalAttack;
 				damage /= defender.PhysicalArmor;
@@ -251,7 +251,7 @@ void calculateAttack(Context& ctx, CharacterInstance& attacker, CharacterInstanc
 				damage /= defender.SpecialArmor;
 				break;
 		}
-		switch(element) {
+		switch (element) {
 			case RuneAttribute::Fire:
 				damage *= 1.0 - defender.FireResistance;
 				break;
@@ -277,20 +277,33 @@ void calculateAttack(Context& ctx, CharacterInstance& attacker, CharacterInstanc
 	if (defender.Parent.CurrentHealth < 0) {
 		defender.Parent.CurrentHealth = 0;
 	}
-	for (auto statusEffects : ctx.GameState->CurrentBattle.StatusEffects) {
+	for (auto statusEffects: ctx.GameState->CurrentBattle.StatusEffects) {
 		statusEffects->PostHit(ctx, defender, (int)damageDone);
 	}
-	for (auto statusEffects : ctx.GameState->CurrentBattle.StatusEffects) {
+	for (auto statusEffects: ctx.GameState->CurrentBattle.StatusEffects) {
 		statusEffects->PostAttack(ctx, attacker, (int)damageDone);
 	}
 }
 
 void State::Attack(int runeIndex) {
-	auto rune = ctx.GameState->CurrentRun.PlayerCharacter.Runes[runeIndex];
+	auto rune = &ctx.GameState->CurrentRun.PlayerCharacter.Runes[runeIndex];
+	for (StatusEffect* buff: rune->Buffs) {
+		bool exists = false;
+		for (StatusEffectInstance* instance: ctx.GameState->CurrentBattle.StatusEffects) {
+			if (&instance->StatusEffect == buff) {
+				exists = true;
+				break;
+			}
+		}
+		if (!exists) {
+			ctx.GameState->CurrentBattle.StatusEffects.push_back(buff->GetInstance(ctx, ctx.GameState->CurrentRun.PlayerCharacter, ctx.GameState->CurrentRun.PlayerCharacter));
+			ctx.Menu.ReloadCombatMenu(ctx);
+		}
+	}
 	std::vector<Character*> targets;
-	switch (rune.Target) {
+	switch (rune->Target) {
 		case RuneAttribute::SingleEnemy:
-			for (auto enemy : ctx.GameState->CurrentBattle.Enemies) {
+			for (auto enemy: ctx.GameState->CurrentBattle.Enemies) {
 				if (enemy->CurrentHealth > 0) {
 					targets.push_back(enemy);
 					break;
@@ -298,7 +311,7 @@ void State::Attack(int runeIndex) {
 			}
 			break;
 		case RuneAttribute::AllEnemies:
-			for (auto enemy : ctx.GameState->CurrentBattle.Enemies) {
+			for (auto enemy: ctx.GameState->CurrentBattle.Enemies) {
 				if (enemy->CurrentHealth > 0) {
 					targets.push_back(enemy);
 				}
@@ -309,7 +322,7 @@ void State::Attack(int runeIndex) {
 			break;
 		case RuneAttribute::SelfAndSingleEnemy:
 			targets.push_back(&ctx.GameState->CurrentRun.PlayerCharacter);
-			for (auto enemy : ctx.GameState->CurrentBattle.Enemies) {
+			for (auto enemy: ctx.GameState->CurrentBattle.Enemies) {
 				if (enemy->CurrentHealth > 0) {
 					targets.push_back(enemy);
 					break;
@@ -318,7 +331,7 @@ void State::Attack(int runeIndex) {
 			break;
 		case RuneAttribute::SelfAndAllEnemies:
 			targets.push_back(&ctx.GameState->CurrentRun.PlayerCharacter);
-			for (auto enemy : ctx.GameState->CurrentBattle.Enemies) {
+			for (auto enemy: ctx.GameState->CurrentBattle.Enemies) {
 				if (enemy->CurrentHealth > 0) {
 					targets.push_back(enemy);
 				}
@@ -327,13 +340,26 @@ void State::Attack(int runeIndex) {
 	}
 
 	auto attacker = ctx.GameState->CurrentRun.PlayerCharacter.Instance(ctx);
-	attacker.CritChance += rune.CritChance;
-	attacker.CritMultiplier *= rune.CritMultiplier;
-	double startingDamage = rune.FlatDamage + (rune.FlatDamage * 0.05 * rune.AdditionalLevel);
+	attacker.CritChance += rune->CritChance;
+	attacker.CritMultiplier *= rune->CritMultiplier;
+	double startingDamage = rune->FlatDamage + (rune->FlatDamage * 0.05 * rune->AdditionalLevel);
 
-	for (auto targetChar : targets) {
+	for (auto targetChar: targets) {
 		auto defender = targetChar->Instance(ctx);
-		calculateAttack(ctx, attacker, defender, startingDamage, rune.AttackType, rune.Element);
+		for (StatusEffect* debuff: rune->Debuffs) {
+			bool exists = false;
+			for (StatusEffectInstance* instance: ctx.GameState->CurrentBattle.StatusEffects) {
+				if (&instance->StatusEffect == debuff && targetChar == &instance->Target) {
+					exists = true;
+					break;
+				}
+			}
+			if (!exists && GetRandomDouble() >= defender.DebuffResistance) {
+				ctx.GameState->CurrentBattle.StatusEffects.push_back(debuff->GetInstance(ctx, *targetChar, ctx.GameState->CurrentRun.PlayerCharacter));
+				ctx.Menu.ReloadCombatMenu(ctx);
+			}
+		}
+		calculateAttack(ctx, attacker, defender, startingDamage, rune->AttackType, rune->Element);
 		if (targetChar->CurrentHealth > targetChar->Health) {
 			targetChar->CurrentHealth = targetChar->Health;
 		}
@@ -347,7 +373,7 @@ void State::Attack(int runeIndex) {
 	}
 	bool survivingEnemies = false;
 	int bossesKilled = 0;
-	for (auto targetChar : ctx.GameState->CurrentBattle.Enemies) {
+	for (auto targetChar: ctx.GameState->CurrentBattle.Enemies) {
 		if (targetChar->CurrentHealth > 0) {
 			survivingEnemies = true;
 		}
@@ -361,6 +387,14 @@ void State::Attack(int runeIndex) {
 		ctx.GameState->CurrentRun.BossesKilled += bossesKilled;
 		ctx.GameState->NextRoom();
 		return;
+	}
+	for (int i = ctx.GameState->CurrentBattle.StatusEffects.size() - 1; i >= 0; i--) {
+		StatusEffectInstance* instance = ctx.GameState->CurrentBattle.StatusEffects[i];
+		instance->TurnEnded(ctx, ctx.GameState->CurrentRun.PlayerCharacter);
+		if (instance->ShouldRemoveInstance(ctx)) {
+			ctx.GameState->CurrentBattle.StatusEffects.erase(ctx.GameState->CurrentBattle.StatusEffects.begin() + i);
+			ctx.Menu.ReloadCombatMenu(ctx);
+		}
 	}
 	NextTurn();
 }
@@ -413,7 +447,7 @@ void State::NextTurn() {
 		}
 		bool survivingEnemies = false;
 		int bossesKilled = 0;
-		for (auto targetChar : ctx.GameState->CurrentBattle.Enemies) {
+		for (auto targetChar: ctx.GameState->CurrentBattle.Enemies) {
 			if (targetChar->CurrentHealth > 0) {
 				survivingEnemies = true;
 			}
@@ -428,16 +462,25 @@ void State::NextTurn() {
 			ctx.GameState->NextRoom();
 			return;
 		}
+
+		for (int i = ctx.GameState->CurrentBattle.StatusEffects.size() - 1; i >= 0; i--) {
+			StatusEffectInstance* instance = ctx.GameState->CurrentBattle.StatusEffects[i];
+			instance->TurnEnded(ctx, *enemy);
+			if (instance->ShouldRemoveInstance(ctx)) {
+				ctx.GameState->CurrentBattle.StatusEffects.erase(ctx.GameState->CurrentBattle.StatusEffects.begin() + i);
+				ctx.Menu.ReloadCombatMenu(ctx);
+			}
+		}
 	}
 }
 
 void State::GameOver() {
-	for (auto enemy : CurrentBattle.Enemies) {
-		delete(enemy);
+	for (auto enemy: CurrentBattle.Enemies) {
+		delete (enemy);
 	}
 	CurrentBattle.Enemies.clear();
-	for (auto statusEffect : CurrentBattle.StatusEffects) {
-		delete(statusEffect);
+	for (auto statusEffect: CurrentBattle.StatusEffects) {
+		delete (statusEffect);
 	}
 	CurrentBattle.StatusEffects.clear();
 	ctx.Menu.ReloadGameOverMenu(ctx);

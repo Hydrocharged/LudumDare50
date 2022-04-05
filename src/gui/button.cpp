@@ -24,7 +24,7 @@ void Button::Draw(Context& ctx) {
 		color = options.HoverColor;
 	}
 	DrawRectangle(X(), Y(), Width(ctx), Height(ctx), color);
-	for (auto child : *children) {
+	for (auto child: *children) {
 		child->DrawComponent(ctx, X() + ((Width(ctx) / 2) - (child->Width(ctx) / 2)), Y() + ((Height(ctx) / 2) - (child->Height(ctx) / 2)));
 	}
 }

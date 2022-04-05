@@ -9,8 +9,7 @@
 #include "statuseffect.h"
 
 Enemy::Enemy(Context& ctx, bool isBoss) {
-	//TODO: generate name
-	Name = "Test Name";
+	Name = GetEnemyName();
 	spriteName = (SpriteName)GetRandomValue(0, 5);
 	EncounterTime = ctx.GameState->CurrentRun.ElapsedTime;
 	IsBoss = isBoss;
@@ -87,7 +86,7 @@ CharacterInstance& Enemy::Instance(Context& ctx) {
 	instance.Evasion = 0;
 	instance.CritChance = 0;
 	instance.CritMultiplier = 1;
-	instance.DebuffResistance = (IsBoss) ? .5 : 0;
+	instance.DebuffResistance = (IsBoss) ? .6 : .3;
 	instance.FireResistance = fireResistance;
 	instance.WaterResistance = waterResistance;
 	instance.ElectricResistance = electricResistance;
@@ -177,7 +176,7 @@ Component* Enemy::GenerateComponent(Context& ctx, const Component::Options& opti
 
 	// Buff/Debuff Row
 	auto statusEffectOption = Component::Options{.WidthScale = .1, .HeightScale = 1};
-	for (StatusEffectInstance* statusEffect : ctx.GameState->CurrentBattle.StatusEffects) {
+	for (StatusEffectInstance* statusEffect: ctx.GameState->CurrentBattle.StatusEffects) {
 		if (statusEffect->IsCaster(ctx, *this) && statusEffect->IsBuff(ctx)) {
 			*statusEffectsRow += statusEffect->StatusEffect.GetSprite(ctx, statusEffectOption);
 		} else if (statusEffect->IsTarget(ctx, *this) && !statusEffect->IsBuff(ctx)) {

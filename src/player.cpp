@@ -20,32 +20,32 @@ int Player::Level(Context& ctx) {
 
 double Player::FireResistance(Context& ctx) {
 	double resistance = 0;
-	for (auto rune : Runes) {
-		resistance += rune.FireResistance(ctx);
+	for (int i = 0; i < 6; i++) {
+		resistance += Runes[i].FireResistance(ctx);
 	}
 	return resistance;
 }
 
 double Player::WaterResistance(Context& ctx) {
 	double resistance = 0;
-	for (auto rune : Runes) {
-		resistance += rune.WaterResistance(ctx);
+	for (int i = 0; i < 6; i++) {
+		resistance += Runes[i].WaterResistance(ctx);
 	}
 	return resistance;
 }
 
 double Player::ElectricResistance(Context& ctx) {
 	double resistance = 0;
-	for (auto rune : Runes) {
-		resistance += rune.ElectricResistance(ctx);
+	for (int i = 0; i < 6; i++) {
+		resistance += Runes[i].ElectricResistance(ctx);
 	}
 	return resistance;
 }
 
 double Player::WindResistance(Context& ctx) {
 	double resistance = 0;
-	for (auto rune : Runes) {
-		resistance += rune.WindResistance(ctx);
+	for (int i = 0; i < 6; i++) {
+		resistance += Runes[i].WindResistance(ctx);
 	}
 	return resistance;
 }

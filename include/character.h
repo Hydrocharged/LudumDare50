@@ -10,6 +10,7 @@
 #include "rune.h"
 
 class Character;
+
 class StatusEffectInstance;
 
 struct CharacterInstance {
@@ -35,7 +36,7 @@ struct CharacterInstance {
 class Character {
 public:
 	Character() : instance(*this) {}
-    virtual int Level(Context& ctx) = 0;
+	virtual int Level(Context& ctx) = 0;
 	virtual double FireResistance(Context& ctx) = 0;
 	virtual double WaterResistance(Context& ctx) = 0;
 	virtual double ElectricResistance(Context& ctx) = 0;
@@ -43,13 +44,13 @@ public:
 	virtual CharacterInstance& Instance(Context& ctx) = 0;
 
 public:
-    int Health = 0;
-    int CurrentHealth = 0;
+	int Health = 0;
+	int CurrentHealth = 0;
 	int PhysicalAttack = 0;
 	int SpecialAttack = 0;
-    int PhysicalArmor = 0;
-    int SpecialArmor = 0;
-    int Speed = 0;
+	int PhysicalArmor = 0;
+	int SpecialArmor = 0;
+	int Speed = 0;
 
 protected:
 	CharacterInstance instance;

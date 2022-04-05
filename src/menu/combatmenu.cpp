@@ -86,7 +86,7 @@ Component* Menu::CreateCombatMenu(Context& ctx) {
 	auto statusEffectsColumn = new VerticalPanel(ctx, {.WidthScale = .05, .HeightScale = 1});
 	*enemyRow += statusEffectsColumn;
 	auto statusEffectOption = Component::Options{.WidthScale = 1, .HeightScale = .15};
-	for (StatusEffectInstance* statusEffect : ctx.GameState->CurrentBattle.StatusEffects) {
+	for (StatusEffectInstance* statusEffect: ctx.GameState->CurrentBattle.StatusEffects) {
 		if (statusEffect->IsCaster(ctx, ctx.GameState->CurrentRun.PlayerCharacter) && statusEffect->IsBuff(ctx)) {
 			*statusEffectsColumn += statusEffect->StatusEffect.GetSprite(ctx, statusEffectOption);
 		} else if (statusEffect->IsTarget(ctx, ctx.GameState->CurrentRun.PlayerCharacter) && !statusEffect->IsBuff(ctx)) {
