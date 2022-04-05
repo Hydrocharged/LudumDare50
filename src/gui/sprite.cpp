@@ -6,6 +6,7 @@
 
 #include "gui/sprite.h"
 #include "raylib.h"
+#include "map"
 
 Sprite::Sprite(Context& ctx, SpriteName spriteName, const Component::Options& options) {
 	this->name = spriteName;
@@ -43,6 +44,9 @@ void Sprite::Draw(Context& ctx) {
 	}
 }
 
+std::map<SpriteName, Image> colors;
+std::map<SpriteName, Image> grays;
+
 void Sprite::load(Context& ctx) {
 	if (colorTex != nullptr) {
 		return;
@@ -55,143 +59,276 @@ void Sprite::load(Context& ctx) {
 	switch (name) {
 		case SpearGoblin:
 			hasGray = true;
-			tempColorImg = LoadImage("../assets/enemies/speargoblin/color.png");
-			tempGrayImg = LoadImage("../assets/enemies/speargoblin/gray.png");
+			if (colors.count(name) <= 0) {
+				colors[name] = LoadImage("../assets/enemies/speargoblin/color.png");
+				grays[name] = LoadImage("../assets/enemies/speargoblin/gray.png");
+			}
+			tempColorImg = ImageCopy(colors[name]);
+			tempGrayImg = ImageCopy(grays[name]);
 			break;
 		case BearBaby:
 			hasGray = true;
-			tempColorImg = LoadImage("../assets/enemies/babybearbaby/color.png");
-			tempGrayImg = LoadImage("../assets/enemies/babybearbaby/gray.png");
+			if (colors.count(name) <= 0) {
+				colors[name] = LoadImage("../assets/enemies/babybearbaby/color.png");
+				grays[name] = LoadImage("../assets/enemies/babybearbaby/gray.png");
+			}
+			tempColorImg = ImageCopy(colors[name]);
+			tempGrayImg = ImageCopy(grays[name]);
 			break;
 		case Golem:
 			hasGray = true;
-			tempColorImg = LoadImage("../assets/enemies/golem/color.png");
-			tempGrayImg = LoadImage("../assets/enemies/golem/gray.png");
+			if (colors.count(name) <= 0) {
+				colors[name] = LoadImage("../assets/enemies/golem/color.png");
+				grays[name] = LoadImage("../assets/enemies/golem/gray.png");
+			}
+			tempColorImg = ImageCopy(colors[name]);
+			tempGrayImg = ImageCopy(grays[name]);
 			break;
 		case Dragon:
 			hasGray = true;
-			tempColorImg = LoadImage("../assets/enemies/dragon/color.png");
-			tempGrayImg = LoadImage("../assets/enemies/dragon/gray.png");
+			if (colors.count(name) <= 0) {
+				colors[name] = LoadImage("../assets/enemies/dragon/color.png");
+				grays[name] = LoadImage("../assets/enemies/dragon/gray.png");
+			}
+			tempColorImg = ImageCopy(colors[name]);
+			tempGrayImg = ImageCopy(grays[name]);
 			break;
 		case Bird:
 			hasGray = true;
-			tempColorImg = LoadImage("../assets/enemies/bird/color.png");
-			tempGrayImg = LoadImage("../assets/enemies/bird/gray.png");
+			if (colors.count(name) <= 0) {
+				colors[name] = LoadImage("../assets/enemies/bird/color.png");
+				grays[name] = LoadImage("../assets/enemies/bird/gray.png");
+			}
+			tempColorImg = ImageCopy(colors[name]);
+			tempGrayImg = ImageCopy(grays[name]);
 			break;
 		case Snake:
 			hasGray = true;
-			tempColorImg = LoadImage("../assets/enemies/snake/color.png");
-			tempGrayImg = LoadImage("../assets/enemies/snake/gray.png");
+			if (colors.count(name) <= 0) {
+				colors[name] = LoadImage("../assets/enemies/snake/color.png");
+				grays[name] = LoadImage("../assets/enemies/snake/gray.png");
+			}
+			tempColorImg = ImageCopy(colors[name]);
+			tempGrayImg = ImageCopy(grays[name]);
 			break;
 		case NoneRune:
-			tempColorImg = LoadImage("../assets/runes/none.png");
+			if (colors.count(name) <= 0) {
+				colors[name] = LoadImage("../assets/runes/none.png");
+			}
+			tempColorImg = ImageCopy(colors[name]);
 			break;
 		case FireRune:
-			tempColorImg = LoadImage("../assets/runes/fire.png");
+			if (colors.count(name) <= 0) {
+				colors[name] = LoadImage("../assets/runes/fire.png");
+			}
+			tempColorImg = ImageCopy(colors[name]);
 			break;
 		case ElectricRune:
-			tempColorImg = LoadImage("../assets/runes/electric.png");
+			if (colors.count(name) <= 0) {
+				colors[name] = LoadImage("../assets/runes/electric.png");
+			}
+			tempColorImg = ImageCopy(colors[name]);
 			break;
 		case WaterRune:
-			tempColorImg = LoadImage("../assets/runes/water.png");
+			if (colors.count(name) <= 0) {
+				colors[name] = LoadImage("../assets/runes/water.png");
+			}
+			tempColorImg = ImageCopy(colors[name]);
 			break;
 		case WindRune:
-			tempColorImg = LoadImage("../assets/runes/wind.png");
+			if (colors.count(name) <= 0) {
+				colors[name] = LoadImage("../assets/runes/wind.png");
+			}
+			tempColorImg = ImageCopy(colors[name]);
 			break;
 		case PureRune:
-			tempColorImg = LoadImage("../assets/runes/pure.png");
+			if (colors.count(name) <= 0) {
+				colors[name] = LoadImage("../assets/runes/pure.png");
+			}
+			tempColorImg = ImageCopy(colors[name]);
 			break;
 		case OmniRune:
-			tempColorImg = LoadImage("../assets/runes/omni.png");
+			if (colors.count(name) <= 0) {
+				colors[name] = LoadImage("../assets/runes/omni.png");
+			}
+			tempColorImg = ImageCopy(colors[name]);
 			break;
 		case Backpack:
-			tempColorImg = LoadImage("../assets/icons/backpack.png");
+			if (colors.count(name) <= 0) {
+				colors[name] = LoadImage("../assets/icons/backpack.png");
+			}
+			tempColorImg = ImageCopy(colors[name]);
 			break;
 		case Back:
-			tempColorImg = LoadImage("../assets/icons/back.png");
+			if (colors.count(name) <= 0) {
+				colors[name] = LoadImage("../assets/icons/back.png");
+			}
+			tempColorImg = ImageCopy(colors[name]);
 			break;
 		case Home:
-			tempColorImg = LoadImage("../assets/icons/home.png");
+			if (colors.count(name) <= 0) {
+				colors[name] = LoadImage("../assets/icons/home.png");
+			}
+			tempColorImg = ImageCopy(colors[name]);
 			break;
 		case SingleEnemy:
-			tempColorImg = LoadImage("../assets/targets/singleenemy.png");
+			if (colors.count(name) <= 0) {
+				colors[name] = LoadImage("../assets/targets/singleenemy.png");
+			}
+			tempColorImg = ImageCopy(colors[name]);
 			break;
 		case AllEnemies:
-			tempColorImg = LoadImage("../assets/targets/allenemies.png");
+			if (colors.count(name) <= 0) {
+				colors[name] = LoadImage("../assets/targets/allenemies.png");
+			}
+			tempColorImg = ImageCopy(colors[name]);
 			break;
 		case Self:
-			tempColorImg = LoadImage("../assets/targets/self.png");
+			if (colors.count(name) <= 0) {
+				colors[name] = LoadImage("../assets/targets/self.png");
+			}
+			tempColorImg = ImageCopy(colors[name]);
 			break;
 		case SelfAndSingleEnemy:
-			tempColorImg = LoadImage("../assets/targets/selfandsingleenemy.png");
+			if (colors.count(name) <= 0) {
+				colors[name] = LoadImage("../assets/targets/selfandsingleenemy.png");
+			}
+			tempColorImg = ImageCopy(colors[name]);
 			break;
 		case SelfAndAllEnemies:
-			tempColorImg = LoadImage("../assets/targets/selfandallenemies.png");
+			if (colors.count(name) <= 0) {
+				colors[name] = LoadImage("../assets/targets/selfandallenemies.png");
+			}
+			tempColorImg = ImageCopy(colors[name]);
 			break;
 		case Physical:
-			tempColorImg = LoadImage("../assets/attacktypes/physical.png");
+			if (colors.count(name) <= 0) {
+				colors[name] = LoadImage("../assets/attacktypes/physical.png");
+			}
+			tempColorImg = ImageCopy(colors[name]);
 			break;
 		case Special:
-			tempColorImg = LoadImage("../assets/attacktypes/special.png");
+			if (colors.count(name) <= 0) {
+				colors[name] = LoadImage("../assets/attacktypes/special.png");
+			}
+			tempColorImg = ImageCopy(colors[name]);
 			break;
 		case Health:
-			tempColorImg = LoadImage("../assets/stats/health.png");
+			if (colors.count(name) <= 0) {
+				colors[name] = LoadImage("../assets/stats/health.png");
+			}
+			tempColorImg = ImageCopy(colors[name]);
 			break;
 		case PhysicalAttack:
-			tempColorImg = LoadImage("../assets/attacktypes/physical.png");
+			if (colors.count(name) <= 0) {
+				colors[name] = LoadImage("../assets/attacktypes/physical.png");
+			}
+			tempColorImg = ImageCopy(colors[name]);
 			break;
 		case SpecialAttack:
-			tempColorImg = LoadImage("../assets/attacktypes/special.png");
+			if (colors.count(name) <= 0) {
+				colors[name] = LoadImage("../assets/attacktypes/special.png");
+			}
+			tempColorImg = ImageCopy(colors[name]);
 			break;
 		case PhysicalArmor:
-			tempColorImg = LoadImage("../assets/stats/physicalarmor.png");
+			if (colors.count(name) <= 0) {
+				colors[name] = LoadImage("../assets/stats/physicalarmor.png");
+			}
+			tempColorImg = ImageCopy(colors[name]);
 			break;
 		case SpecialArmor:
-			tempColorImg = LoadImage("../assets/stats/specialarmor.png");
+			if (colors.count(name) <= 0) {
+				colors[name] = LoadImage("../assets/stats/specialarmor.png");
+			}
+			tempColorImg = ImageCopy(colors[name]);
 			break;
 		case Speed:
-			tempColorImg = LoadImage("../assets/stats/speed.png");
+			if (colors.count(name) <= 0) {
+				colors[name] = LoadImage("../assets/stats/speed.png");
+			}
+			tempColorImg = ImageCopy(colors[name]);
 			break;
 		case Evasion:
-			tempColorImg = LoadImage("../assets/stats/evasion.png");
+			if (colors.count(name) <= 0) {
+				colors[name] = LoadImage("../assets/stats/evasion.png");
+			}
+			tempColorImg = ImageCopy(colors[name]);
 			break;
 		case FireResistance:
-			tempColorImg = LoadImage("../assets/stats/fireresistance.png");
+			if (colors.count(name) <= 0) {
+				colors[name] = LoadImage("../assets/stats/fireresistance.png");
+			}
+			tempColorImg = ImageCopy(colors[name]);
 			break;
 		case WaterResistance:
-			tempColorImg = LoadImage("../assets/stats/waterresistance.png");
+			if (colors.count(name) <= 0) {
+				colors[name] = LoadImage("../assets/stats/waterresistance.png");
+			}
+			tempColorImg = ImageCopy(colors[name]);
 			break;
 		case ElectricResistance:
-			tempColorImg = LoadImage("../assets/stats/electricresistance.png");
+			if (colors.count(name) <= 0) {
+				colors[name] = LoadImage("../assets/stats/electricresistance.png");
+			}
+			tempColorImg = ImageCopy(colors[name]);
 			break;
 		case WindResistance:
-			tempColorImg = LoadImage("../assets/stats/windresistance.png");
+			if (colors.count(name) <= 0) {
+				colors[name] = LoadImage("../assets/stats/windresistance.png");
+			}
+			tempColorImg = ImageCopy(colors[name]);
 			break;
 		case Lifesteal:
-			tempColorImg = LoadImage("../assets/buffdebuff/lifesteal.png");
+			if (colors.count(name) <= 0) {
+				colors[name] = LoadImage("../assets/buffdebuff/lifesteal.png");
+			}
+			tempColorImg = ImageCopy(colors[name]);
 			break;
 		case Lucky:
-			tempColorImg = LoadImage("../assets/buffdebuff/lucky.png");
+			if (colors.count(name) <= 0) {
+				colors[name] = LoadImage("../assets/buffdebuff/lucky.png");
+			}
+			tempColorImg = ImageCopy(colors[name]);
 			break;
 		case Adrenaline:
-			tempColorImg = LoadImage("../assets/buffdebuff/adrenaline.png");
+			if (colors.count(name) <= 0) {
+				colors[name] = LoadImage("../assets/buffdebuff/adrenaline.png");
+			}
+			tempColorImg = ImageCopy(colors[name]);
 			break;
 		case ElementalShield:
 			hasGray = true;
-			tempColorImg = LoadImage("../assets/buffdebuff/shieldcolor.png");
-			tempGrayImg = LoadImage("../assets/buffdebuff/shieldgray.png");
+			if (colors.count(name) <= 0) {
+				colors[name] = LoadImage("../assets/buffdebuff/shieldcolor.png");
+				grays[name] = LoadImage("../assets/buffdebuff/shieldgray.png");
+			}
+			tempColorImg = ImageCopy(colors[name]);
+			tempGrayImg = ImageCopy(grays[name]);
 			break;
 		case Poison:
-			tempColorImg = LoadImage("../assets/buffdebuff/poison.png");
+			if (colors.count(name) <= 0) {
+				colors[name] = LoadImage("../assets/buffdebuff/poison.png");
+			}
+			tempColorImg = ImageCopy(colors[name]);
 			break;
 		case Bleed:
-			tempColorImg = LoadImage("../assets/buffdebuff/bleed.png");
+			if (colors.count(name) <= 0) {
+				colors[name] = LoadImage("../assets/buffdebuff/bleed.png");
+			}
+			tempColorImg = ImageCopy(colors[name]);
 			break;
 		case Sleep:
-			tempColorImg = LoadImage("../assets/buffdebuff/sleep.png");
+			if (colors.count(name) <= 0) {
+				colors[name] = LoadImage("../assets/buffdebuff/sleep.png");
+			}
+			tempColorImg = ImageCopy(colors[name]);
 			break;
 		case Sick:
-			tempColorImg = LoadImage("../assets/buffdebuff/sick.png");
+			if (colors.count(name) <= 0) {
+				colors[name] = LoadImage("../assets/buffdebuff/sick.png");
+			}
+			tempColorImg = ImageCopy(colors[name]);
 			break;
 	}
 
