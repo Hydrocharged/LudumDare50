@@ -9,18 +9,9 @@
 #include "state.h"
 #include "cmath"
 #include "statuseffect.h"
-#include "random"
 #include "queue"
 
-std::random_device rd;
-std::mt19937 mt(rd());
-std::uniform_real_distribution<double> dist(0.0, std::nextafter(1.0, 2));
-
 std::queue<Component*> toDelete;
-
-double GetRandomDouble() {
-	return dist(mt);
-}
 
 Context::Context() {
 	GameState = new State(*this);
@@ -29,12 +20,12 @@ Context::Context() {
 }
 
 Context::~Context() {
-	for (auto menu : Menu.menus) {
-		delete(menu);
+	for (auto menu: Menu.menus) {
+		delete (menu);
 	}
-	delete(this->GameState);
+	delete (this->GameState);
 	while (!toDelete.empty()) {
-		delete(toDelete.front());
+		delete (toDelete.front());
 		toDelete.pop();
 	}
 }
@@ -45,7 +36,7 @@ void Context::Initialize() {
 
 void Context::Update() {
 	while (!toDelete.empty()) {
-		delete(toDelete.front());
+		delete (toDelete.front());
 		toDelete.pop();
 	}
 

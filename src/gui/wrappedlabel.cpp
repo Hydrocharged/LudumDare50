@@ -35,8 +35,8 @@ void WrappedLabel::Draw(Context& ctx) {
 	if (options.HoverColor.a > 0 && IsMouseOver(ctx)) {
 		color = options.HoverColor;
 	}
-	DrawTextBoxed(GetFontDefault(), text.c_str(), Rectangle{(float)X(), (float)Y(), (float)Width(ctx), (float)Height(ctx)}, (float)fontSize, (float)fontSize/10.0f, true, color);
-	for (auto child : *children) {
+	DrawTextBoxed(GetFontDefault(), text.c_str(), Rectangle{(float)X(), (float)Y(), (float)Width(ctx), (float)Height(ctx)}, (float)fontSize, (float)fontSize / 10.0f, true, color);
+	for (auto child: *children) {
 		child->DrawComponent(ctx, X() + ((Width(ctx) / 2) - (child->Width(ctx) / 2)), Y() + ((Height(ctx) / 2) - (child->Height(ctx) / 2)));
 	}
 }

@@ -44,7 +44,7 @@ void Border::Draw(Context& ctx) {
 		DrawRectangle(X() + width - thickness, Y() + thickness, thickness, height - (thickness * 2), color); // Right
 	}
 
-	for (auto child : *children) {
+	for (auto child: *children) {
 		child->DrawComponent(ctx, X() + ((width / 2) - (child->Width(ctx) / 2)), Y() + ((height / 2) - (child->Height(ctx) / 2)));
 	}
 }

@@ -7,10 +7,10 @@
 #include "gui/component.h"
 
 Component::~Component() {
-	for (Component* child : *children) {
-		delete(child);
+	for (Component* child: *children) {
+		delete (child);
 	}
-	delete(this->children);
+	delete (this->children);
 }
 
 bool Component::IsMouseOver(Context& ctx) {
@@ -47,7 +47,7 @@ void Component::Update(Context& ctx) {
 	if (ctx.Mouse.HasClicked() && IsMouseOver(ctx)) {
 		OnClick(ctx);
 	}
-	for (auto child : *children) {
+	for (auto child: *children) {
 		child->Update(ctx);
 	}
 }

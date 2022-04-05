@@ -11,7 +11,9 @@
 
 class Component {
 	friend class VerticalPanel;
+
 	friend class HorizontalPanel;
+
 	friend class Button;
 
 public:
@@ -26,8 +28,8 @@ public:
 	bool IsMouseDown(Context& ctx);
 	int X() { return x; }
 	int Y() { return y; }
-	void operator +=(Component* component);
-	Component* operator [](int i) { return children->at(i); }
+	void operator+=(Component* component);
+	Component* operator[](int i) { return children->at(i); }
 	Component* Child(int i) { return children->at(i); }
 
 	struct Options {
@@ -47,6 +49,7 @@ public:
 	private:
 		Options copy();
 	};
+
 	Options& GetOptions() { return options; }
 
 protected:

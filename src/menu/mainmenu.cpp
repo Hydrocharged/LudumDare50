@@ -19,7 +19,7 @@ Component* Menu::CreateMainMenu(Context& ctx) {
 	*mainMenu += titlePanel;
 	*mainMenu += buttonPanel;
 
-	*titlePanel += new Label(ctx, "The Fastest RPG",{.WidthScale = 0.7, .HeightScale = 0.5, .DefaultColor = WHITE});
+	*titlePanel += new Label(ctx, "The Fastest RPG", {.WidthScale = 0.7, .HeightScale = 0.5, .DefaultColor = WHITE});
 
 	*buttonPanel += (new Button(ctx, {
 		.WidthScale = 0.4,

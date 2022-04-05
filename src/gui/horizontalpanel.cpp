@@ -34,12 +34,12 @@ void HorizontalPanel::Draw(Context& ctx) {
 
 	int halfHeight = Height(ctx) / 2;
 	int totalChildWidth = 0;
-	for (auto& child : *children) {
+	for (auto& child: *children) {
 		totalChildWidth += child->Width(ctx);
 	}
 	int childSpacing = (width - totalChildWidth) / (children->size() + 1);
 	int nextChildX = X();
-	for (auto& child : *children) {
+	for (auto& child: *children) {
 		nextChildX += childSpacing;
 		child->DrawComponent(ctx, nextChildX, Y() + (halfHeight - (child->Height(ctx) / 2)));
 		nextChildX += child->Width(ctx);

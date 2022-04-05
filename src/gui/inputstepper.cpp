@@ -82,7 +82,7 @@ void InputStepper::Draw(Context& ctx) {
 		Vector2{(float)(X() + width - fifthWidth), (float)Y() + height - (0.05f * halfHeight)},
 		0.05f * height,
 		rightColor);
-	for (auto child : *children) {
+	for (auto child: *children) {
 		child->DrawComponent(ctx, X() + ((width / 2) - (child->Width(ctx) / 2)), Y() + (height / 2) - (child->Height(ctx) / 2));
 	}
 }

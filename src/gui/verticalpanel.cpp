@@ -34,12 +34,12 @@ void VerticalPanel::Draw(Context& ctx) {
 
 	int halfWidth = Width(ctx) / 2;
 	int totalChildHeight = 0;
-	for (auto& child : *children) {
+	for (auto& child: *children) {
 		totalChildHeight += child->Height(ctx);
 	}
 	int childSpacing = (height - totalChildHeight) / (children->size() + 1);
 	int nextChildY = Y();
-	for (auto& child : *children) {
+	for (auto& child: *children) {
 		nextChildY += childSpacing;
 		child->DrawComponent(ctx, X() + (halfWidth - (child->Width(ctx) / 2)), nextChildY);
 		nextChildY += child->Height(ctx);

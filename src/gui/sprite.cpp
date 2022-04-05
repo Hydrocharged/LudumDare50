@@ -8,8 +8,8 @@
 #include "raylib.h"
 
 Sprite::Sprite(Context& ctx, SpriteName spriteName, const Component::Options& options) {
-    this->name = spriteName;
-    this->options = options;
+	this->name = spriteName;
+	this->options = options;
 }
 
 Sprite::~Sprite() {
@@ -17,14 +17,14 @@ Sprite::~Sprite() {
 }
 
 int Sprite::Height(Context& ctx) {
-    return (int)((float)parent->Height(ctx) * options.HeightScale);
+	return (int)((float)parent->Height(ctx) * options.HeightScale);
 }
 
 int Sprite::Width(Context& ctx) {
-    return (int)((float)parent->Width(ctx) * options.WidthScale);
+	return (int)((float)parent->Width(ctx) * options.WidthScale);
 }
 
-void Sprite::Draw(Context &ctx) {
+void Sprite::Draw(Context& ctx) {
 	load(ctx);
 	if (ctx.Screen.HasResized()) {
 		unload();
@@ -38,7 +38,7 @@ void Sprite::Draw(Context &ctx) {
 	if (grayTex != nullptr) {
 		DrawTexture(*grayTex, X() + halfWidth - (grayTex->width / 2), Y() + halfHeight - (grayTex->height / 2), options.DefaultColor);
 	}
-	for (auto child : *children) {
+	for (auto child: *children) {
 		child->DrawComponent(ctx, X() + ((Width(ctx) / 2) - (child->Width(ctx) / 2)), Y() + ((Height(ctx) / 2) - (child->Height(ctx) / 2)));
 	}
 }
@@ -52,7 +52,7 @@ void Sprite::load(Context& ctx) {
 	Image tempGrayImg;
 	bool hasGray = false;
 
-	switch(name) {
+	switch (name) {
 		case SpearGoblin:
 			hasGray = true;
 			tempColorImg = LoadImage("../assets/enemies/speargoblin/color.png");
@@ -223,12 +223,12 @@ void Sprite::load(Context& ctx) {
 void Sprite::unload() {
 	if (colorTex != nullptr) {
 		UnloadTexture(*colorTex);
-		delete(colorTex);
+		delete (colorTex);
 		colorTex = nullptr;
 	}
 	if (grayTex != nullptr) {
 		UnloadTexture(*grayTex);
-		delete(grayTex);
+		delete (grayTex);
 		grayTex = nullptr;
 	}
 }

@@ -85,5 +85,4 @@ public:
 	double CritMultiplier;
 };
 
-
 #endif //RUNE_H
