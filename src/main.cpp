@@ -6,8 +6,10 @@
 
 #include "context.h"
 #include "gui/system.h"
+#include "hideconsole.h"
 
 int main(void) {
+	HideConsole();
 	Context ctx = Context();
 
 	SetConfigFlags(FLAG_WINDOW_RESIZABLE);
