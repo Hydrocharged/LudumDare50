@@ -4,14 +4,15 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-#ifndef PROGRESSBAR_H
-#define PROGRESSBAR_H
+#ifndef FUNCTIONLABEL_H
+#define FUNCTIONLABEL_H
 #include "context.h"
 #include "component.h"
+#include "string"
 
-class ProgressBar : public Component {
+class FunctionLabel : public Component {
 public:
-	ProgressBar(Context& ctx, const Component::Options& options, int* maxValue, int* currentValue);
+	FunctionLabel(Context& ctx, const Component::Options& options, std::string textModel, std::function<std::string(Context&)> func);
 	int Width(Context& ctx) override;
 	int Height(Context& ctx) override;
 
@@ -19,13 +20,9 @@ protected:
 	void Draw(Context& ctx) override;
 
 private:
-	int* maxValue;
-	int* currentValue;
-	int lastCurrentValue;
-	double fromValue;
-	double targetTime;
-
-	const double duration = 0.25;
+	std::function<std::string(Context&)> func;
+	std::string textModel;
+	float modelLengthAt10;
 };
 
-#endif //PROGRESSBAR_H
+#endif //FUNCTIONLABEL_H

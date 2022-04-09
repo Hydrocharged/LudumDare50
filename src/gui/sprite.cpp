@@ -33,22 +33,31 @@ void Sprite::Draw(Context& ctx) {
 	}
 	int halfWidth = Width(ctx) / 2;
 	int halfHeight = Height(ctx) / 2;
-	if (colorTex != nullptr) {
-		DrawTexture(*colorTex, X() + halfWidth - (colorTex->width / 2), Y() + halfHeight - (colorTex->height / 2), WHITE);
+	if (colorTex.height != 0) {
+		auto tint = WHITE;
+		tint.a = options.DefaultColor.a;
+		DrawTexture(colorTex, X() + halfWidth - (colorTex.width / 2), Y() + halfHeight - (colorTex.height / 2), tint);
 	}
-	if (grayTex != nullptr) {
-		DrawTexture(*grayTex, X() + halfWidth - (grayTex->width / 2), Y() + halfHeight - (grayTex->height / 2), options.DefaultColor);
+	if (grayTex.height != 0) {
+		DrawTexture(grayTex, X() + halfWidth - (grayTex.width / 2), Y() + halfHeight - (grayTex.height / 2), options.DefaultColor);
 	}
 	for (auto child: *children) {
 		child->DrawComponent(ctx, X() + ((Width(ctx) / 2) - (child->Width(ctx) / 2)), Y() + ((Height(ctx) / 2) - (child->Height(ctx) / 2)));
 	}
 }
 
+#if defined(PLATFORM_WEB)
+std::string pathPrefix = "";
+#else
+std::string pathPrefix = "../";
+#endif // PLATFORM_WEB
+
 std::map<SpriteName, Image> colors;
 std::map<SpriteName, Image> grays;
+std::map<TextureKey, Texture2D> textures;
 
 void Sprite::load(Context& ctx) {
-	if (colorTex != nullptr) {
+	if (colorTex.height != 0) {
 		return;
 	}
 
@@ -59,276 +68,276 @@ void Sprite::load(Context& ctx) {
 	switch (name) {
 		case SpearGoblin:
 			hasGray = true;
-			if (colors.count(name) <= 0) {
-				colors[name] = LoadImage("../assets/enemies/speargoblin/color.png");
-				grays[name] = LoadImage("../assets/enemies/speargoblin/gray.png");
+			if (colors.find(name) == colors.end()) {
+				colors[name] = LoadImage((pathPrefix + "assets/enemies/speargoblin/color.png").c_str());
+				grays[name] = LoadImage((pathPrefix + "assets/enemies/speargoblin/gray.png").c_str());
 			}
-			tempColorImg = ImageCopy(colors[name]);
-			tempGrayImg = ImageCopy(grays[name]);
+			tempColorImg = colors[name];
+			tempGrayImg = grays[name];
 			break;
 		case BearBaby:
 			hasGray = true;
-			if (colors.count(name) <= 0) {
-				colors[name] = LoadImage("../assets/enemies/babybearbaby/color.png");
-				grays[name] = LoadImage("../assets/enemies/babybearbaby/gray.png");
+			if (colors.find(name) == colors.end()) {
+				colors[name] = LoadImage((pathPrefix + "assets/enemies/babybearbaby/color.png").c_str());
+				grays[name] = LoadImage((pathPrefix + "assets/enemies/babybearbaby/gray.png").c_str());
 			}
-			tempColorImg = ImageCopy(colors[name]);
-			tempGrayImg = ImageCopy(grays[name]);
+			tempColorImg = colors[name];
+			tempGrayImg = grays[name];
 			break;
 		case Golem:
 			hasGray = true;
-			if (colors.count(name) <= 0) {
-				colors[name] = LoadImage("../assets/enemies/golem/color.png");
-				grays[name] = LoadImage("../assets/enemies/golem/gray.png");
+			if (colors.find(name) == colors.end()) {
+				colors[name] = LoadImage((pathPrefix + "assets/enemies/golem/color.png").c_str());
+				grays[name] = LoadImage((pathPrefix + "assets/enemies/golem/gray.png").c_str());
 			}
-			tempColorImg = ImageCopy(colors[name]);
-			tempGrayImg = ImageCopy(grays[name]);
+			tempColorImg = colors[name];
+			tempGrayImg = grays[name];
 			break;
 		case Dragon:
 			hasGray = true;
-			if (colors.count(name) <= 0) {
-				colors[name] = LoadImage("../assets/enemies/dragon/color.png");
-				grays[name] = LoadImage("../assets/enemies/dragon/gray.png");
+			if (colors.find(name) == colors.end()) {
+				colors[name] = LoadImage((pathPrefix + "assets/enemies/dragon/color.png").c_str());
+				grays[name] = LoadImage((pathPrefix + "assets/enemies/dragon/gray.png").c_str());
 			}
-			tempColorImg = ImageCopy(colors[name]);
-			tempGrayImg = ImageCopy(grays[name]);
+			tempColorImg = colors[name];
+			tempGrayImg = grays[name];
 			break;
 		case Bird:
 			hasGray = true;
-			if (colors.count(name) <= 0) {
-				colors[name] = LoadImage("../assets/enemies/bird/color.png");
-				grays[name] = LoadImage("../assets/enemies/bird/gray.png");
+			if (colors.find(name) == colors.end()) {
+				colors[name] = LoadImage((pathPrefix + "assets/enemies/bird/color.png").c_str());
+				grays[name] = LoadImage((pathPrefix + "assets/enemies/bird/gray.png").c_str());
 			}
-			tempColorImg = ImageCopy(colors[name]);
-			tempGrayImg = ImageCopy(grays[name]);
+			tempColorImg = colors[name];
+			tempGrayImg = grays[name];
 			break;
 		case Snake:
 			hasGray = true;
-			if (colors.count(name) <= 0) {
-				colors[name] = LoadImage("../assets/enemies/snake/color.png");
-				grays[name] = LoadImage("../assets/enemies/snake/gray.png");
+			if (colors.find(name) == colors.end()) {
+				colors[name] = LoadImage((pathPrefix + "assets/enemies/snake/color.png").c_str());
+				grays[name] = LoadImage((pathPrefix + "assets/enemies/snake/gray.png").c_str());
 			}
-			tempColorImg = ImageCopy(colors[name]);
-			tempGrayImg = ImageCopy(grays[name]);
+			tempColorImg = colors[name];
+			tempGrayImg = grays[name];
 			break;
 		case NoneRune:
-			if (colors.count(name) <= 0) {
-				colors[name] = LoadImage("../assets/runes/none.png");
+			if (colors.find(name) == colors.end()) {
+				colors[name] = LoadImage((pathPrefix + "assets/runes/none.png").c_str());
 			}
-			tempColorImg = ImageCopy(colors[name]);
+			tempColorImg = colors[name];
 			break;
 		case FireRune:
-			if (colors.count(name) <= 0) {
-				colors[name] = LoadImage("../assets/runes/fire.png");
+			if (colors.find(name) == colors.end()) {
+				colors[name] = LoadImage((pathPrefix + "assets/runes/fire.png").c_str());
 			}
-			tempColorImg = ImageCopy(colors[name]);
+			tempColorImg = colors[name];
 			break;
 		case ElectricRune:
-			if (colors.count(name) <= 0) {
-				colors[name] = LoadImage("../assets/runes/electric.png");
+			if (colors.find(name) == colors.end()) {
+				colors[name] = LoadImage((pathPrefix + "assets/runes/electric.png").c_str());
 			}
-			tempColorImg = ImageCopy(colors[name]);
+			tempColorImg = colors[name];
 			break;
 		case WaterRune:
-			if (colors.count(name) <= 0) {
-				colors[name] = LoadImage("../assets/runes/water.png");
+			if (colors.find(name) == colors.end()) {
+				colors[name] = LoadImage((pathPrefix + "assets/runes/water.png").c_str());
 			}
-			tempColorImg = ImageCopy(colors[name]);
+			tempColorImg = colors[name];
 			break;
 		case WindRune:
-			if (colors.count(name) <= 0) {
-				colors[name] = LoadImage("../assets/runes/wind.png");
+			if (colors.find(name) == colors.end()) {
+				colors[name] = LoadImage((pathPrefix + "assets/runes/wind.png").c_str());
 			}
-			tempColorImg = ImageCopy(colors[name]);
+			tempColorImg = colors[name];
 			break;
 		case PureRune:
-			if (colors.count(name) <= 0) {
-				colors[name] = LoadImage("../assets/runes/pure.png");
+			if (colors.find(name) == colors.end()) {
+				colors[name] = LoadImage((pathPrefix + "assets/runes/pure.png").c_str());
 			}
-			tempColorImg = ImageCopy(colors[name]);
+			tempColorImg = colors[name];
 			break;
 		case OmniRune:
-			if (colors.count(name) <= 0) {
-				colors[name] = LoadImage("../assets/runes/omni.png");
+			if (colors.find(name) == colors.end()) {
+				colors[name] = LoadImage((pathPrefix + "assets/runes/omni.png").c_str());
 			}
-			tempColorImg = ImageCopy(colors[name]);
+			tempColorImg = colors[name];
 			break;
 		case Backpack:
-			if (colors.count(name) <= 0) {
-				colors[name] = LoadImage("../assets/icons/backpack.png");
+			if (colors.find(name) == colors.end()) {
+				colors[name] = LoadImage((pathPrefix + "assets/icons/backpack.png").c_str());
 			}
-			tempColorImg = ImageCopy(colors[name]);
+			tempColorImg = colors[name];
 			break;
 		case Back:
-			if (colors.count(name) <= 0) {
-				colors[name] = LoadImage("../assets/icons/back.png");
+			if (colors.find(name) == colors.end()) {
+				colors[name] = LoadImage((pathPrefix + "assets/icons/back.png").c_str());
 			}
-			tempColorImg = ImageCopy(colors[name]);
+			tempColorImg = colors[name];
 			break;
 		case Home:
-			if (colors.count(name) <= 0) {
-				colors[name] = LoadImage("../assets/icons/home.png");
+			if (colors.find(name) == colors.end()) {
+				colors[name] = LoadImage((pathPrefix + "assets/icons/home.png").c_str());
 			}
-			tempColorImg = ImageCopy(colors[name]);
+			tempColorImg = colors[name];
 			break;
 		case SingleEnemy:
-			if (colors.count(name) <= 0) {
-				colors[name] = LoadImage("../assets/targets/singleenemy.png");
+			if (colors.find(name) == colors.end()) {
+				colors[name] = LoadImage((pathPrefix + "assets/targets/singleenemy.png").c_str());
 			}
-			tempColorImg = ImageCopy(colors[name]);
+			tempColorImg = colors[name];
 			break;
 		case AllEnemies:
-			if (colors.count(name) <= 0) {
-				colors[name] = LoadImage("../assets/targets/allenemies.png");
+			if (colors.find(name) == colors.end()) {
+				colors[name] = LoadImage((pathPrefix + "assets/targets/allenemies.png").c_str());
 			}
-			tempColorImg = ImageCopy(colors[name]);
+			tempColorImg = colors[name];
 			break;
 		case Self:
-			if (colors.count(name) <= 0) {
-				colors[name] = LoadImage("../assets/targets/self.png");
+			if (colors.find(name) == colors.end()) {
+				colors[name] = LoadImage((pathPrefix + "assets/targets/self.png").c_str());
 			}
-			tempColorImg = ImageCopy(colors[name]);
+			tempColorImg = colors[name];
 			break;
 		case SelfAndSingleEnemy:
-			if (colors.count(name) <= 0) {
-				colors[name] = LoadImage("../assets/targets/selfandsingleenemy.png");
+			if (colors.find(name) == colors.end()) {
+				colors[name] = LoadImage((pathPrefix + "assets/targets/selfandsingleenemy.png").c_str());
 			}
-			tempColorImg = ImageCopy(colors[name]);
+			tempColorImg = colors[name];
 			break;
 		case SelfAndAllEnemies:
-			if (colors.count(name) <= 0) {
-				colors[name] = LoadImage("../assets/targets/selfandallenemies.png");
+			if (colors.find(name) == colors.end()) {
+				colors[name] = LoadImage((pathPrefix + "assets/targets/selfandallenemies.png").c_str());
 			}
-			tempColorImg = ImageCopy(colors[name]);
+			tempColorImg = colors[name];
 			break;
 		case Physical:
-			if (colors.count(name) <= 0) {
-				colors[name] = LoadImage("../assets/attacktypes/physical.png");
+			if (colors.find(name) == colors.end()) {
+				colors[name] = LoadImage((pathPrefix + "assets/attacktypes/physical.png").c_str());
 			}
-			tempColorImg = ImageCopy(colors[name]);
+			tempColorImg = colors[name];
 			break;
 		case Special:
-			if (colors.count(name) <= 0) {
-				colors[name] = LoadImage("../assets/attacktypes/special.png");
+			if (colors.find(name) == colors.end()) {
+				colors[name] = LoadImage((pathPrefix + "assets/attacktypes/special.png").c_str());
 			}
-			tempColorImg = ImageCopy(colors[name]);
+			tempColorImg = colors[name];
 			break;
 		case Health:
-			if (colors.count(name) <= 0) {
-				colors[name] = LoadImage("../assets/stats/health.png");
+			if (colors.find(name) == colors.end()) {
+				colors[name] = LoadImage((pathPrefix + "assets/stats/health.png").c_str());
 			}
-			tempColorImg = ImageCopy(colors[name]);
+			tempColorImg = colors[name];
 			break;
 		case PhysicalAttack:
-			if (colors.count(name) <= 0) {
-				colors[name] = LoadImage("../assets/attacktypes/physical.png");
+			if (colors.find(name) == colors.end()) {
+				colors[name] = LoadImage((pathPrefix + "assets/attacktypes/physical.png").c_str());
 			}
-			tempColorImg = ImageCopy(colors[name]);
+			tempColorImg = colors[name];
 			break;
 		case SpecialAttack:
-			if (colors.count(name) <= 0) {
-				colors[name] = LoadImage("../assets/attacktypes/special.png");
+			if (colors.find(name) == colors.end()) {
+				colors[name] = LoadImage((pathPrefix + "assets/attacktypes/special.png").c_str());
 			}
-			tempColorImg = ImageCopy(colors[name]);
+			tempColorImg = colors[name];
 			break;
 		case PhysicalArmor:
-			if (colors.count(name) <= 0) {
-				colors[name] = LoadImage("../assets/stats/physicalarmor.png");
+			if (colors.find(name) == colors.end()) {
+				colors[name] = LoadImage((pathPrefix + "assets/stats/physicalarmor.png").c_str());
 			}
-			tempColorImg = ImageCopy(colors[name]);
+			tempColorImg = colors[name];
 			break;
 		case SpecialArmor:
-			if (colors.count(name) <= 0) {
-				colors[name] = LoadImage("../assets/stats/specialarmor.png");
+			if (colors.find(name) == colors.end()) {
+				colors[name] = LoadImage((pathPrefix + "assets/stats/specialarmor.png").c_str());
 			}
-			tempColorImg = ImageCopy(colors[name]);
+			tempColorImg = colors[name];
 			break;
 		case Speed:
-			if (colors.count(name) <= 0) {
-				colors[name] = LoadImage("../assets/stats/speed.png");
+			if (colors.find(name) == colors.end()) {
+				colors[name] = LoadImage((pathPrefix + "assets/stats/speed.png").c_str());
 			}
-			tempColorImg = ImageCopy(colors[name]);
+			tempColorImg = colors[name];
 			break;
 		case Evasion:
-			if (colors.count(name) <= 0) {
-				colors[name] = LoadImage("../assets/stats/evasion.png");
+			if (colors.find(name) == colors.end()) {
+				colors[name] = LoadImage((pathPrefix + "assets/stats/evasion.png").c_str());
 			}
-			tempColorImg = ImageCopy(colors[name]);
+			tempColorImg = colors[name];
 			break;
 		case FireResistance:
-			if (colors.count(name) <= 0) {
-				colors[name] = LoadImage("../assets/stats/fireresistance.png");
+			if (colors.find(name) == colors.end()) {
+				colors[name] = LoadImage((pathPrefix + "assets/stats/fireresistance.png").c_str());
 			}
-			tempColorImg = ImageCopy(colors[name]);
+			tempColorImg = colors[name];
 			break;
 		case WaterResistance:
-			if (colors.count(name) <= 0) {
-				colors[name] = LoadImage("../assets/stats/waterresistance.png");
+			if (colors.find(name) == colors.end()) {
+				colors[name] = LoadImage((pathPrefix + "assets/stats/waterresistance.png").c_str());
 			}
-			tempColorImg = ImageCopy(colors[name]);
+			tempColorImg = colors[name];
 			break;
 		case ElectricResistance:
-			if (colors.count(name) <= 0) {
-				colors[name] = LoadImage("../assets/stats/electricresistance.png");
+			if (colors.find(name) == colors.end()) {
+				colors[name] = LoadImage((pathPrefix + "assets/stats/electricresistance.png").c_str());
 			}
-			tempColorImg = ImageCopy(colors[name]);
+			tempColorImg = colors[name];
 			break;
 		case WindResistance:
-			if (colors.count(name) <= 0) {
-				colors[name] = LoadImage("../assets/stats/windresistance.png");
+			if (colors.find(name) == colors.end()) {
+				colors[name] = LoadImage((pathPrefix + "assets/stats/windresistance.png").c_str());
 			}
-			tempColorImg = ImageCopy(colors[name]);
+			tempColorImg = colors[name];
 			break;
 		case Lifesteal:
-			if (colors.count(name) <= 0) {
-				colors[name] = LoadImage("../assets/buffdebuff/lifesteal.png");
+			if (colors.find(name) == colors.end()) {
+				colors[name] = LoadImage((pathPrefix + "assets/buffdebuff/lifesteal.png").c_str());
 			}
-			tempColorImg = ImageCopy(colors[name]);
+			tempColorImg = colors[name];
 			break;
 		case Lucky:
-			if (colors.count(name) <= 0) {
-				colors[name] = LoadImage("../assets/buffdebuff/lucky.png");
+			if (colors.find(name) == colors.end()) {
+				colors[name] = LoadImage((pathPrefix + "assets/buffdebuff/lucky.png").c_str());
 			}
-			tempColorImg = ImageCopy(colors[name]);
+			tempColorImg = colors[name];
 			break;
 		case Adrenaline:
-			if (colors.count(name) <= 0) {
-				colors[name] = LoadImage("../assets/buffdebuff/adrenaline.png");
+			if (colors.find(name) == colors.end()) {
+				colors[name] = LoadImage((pathPrefix + "assets/buffdebuff/adrenaline.png").c_str());
 			}
-			tempColorImg = ImageCopy(colors[name]);
+			tempColorImg = colors[name];
 			break;
 		case ElementalShield:
 			hasGray = true;
-			if (colors.count(name) <= 0) {
-				colors[name] = LoadImage("../assets/buffdebuff/shieldcolor.png");
-				grays[name] = LoadImage("../assets/buffdebuff/shieldgray.png");
+			if (colors.find(name) == colors.end()) {
+				colors[name] = LoadImage((pathPrefix + "assets/buffdebuff/shieldcolor.png").c_str());
+				grays[name] = LoadImage((pathPrefix + "assets/buffdebuff/shieldgray.png").c_str());
 			}
-			tempColorImg = ImageCopy(colors[name]);
-			tempGrayImg = ImageCopy(grays[name]);
+			tempColorImg = colors[name];
+			tempGrayImg = grays[name];
 			break;
 		case Poison:
-			if (colors.count(name) <= 0) {
-				colors[name] = LoadImage("../assets/buffdebuff/poison.png");
+			if (colors.find(name) == colors.end()) {
+				colors[name] = LoadImage((pathPrefix + "assets/buffdebuff/poison.png").c_str());
 			}
-			tempColorImg = ImageCopy(colors[name]);
+			tempColorImg = colors[name];
 			break;
 		case Bleed:
-			if (colors.count(name) <= 0) {
-				colors[name] = LoadImage("../assets/buffdebuff/bleed.png");
+			if (colors.find(name) == colors.end()) {
+				colors[name] = LoadImage((pathPrefix + "assets/buffdebuff/bleed.png").c_str());
 			}
-			tempColorImg = ImageCopy(colors[name]);
+			tempColorImg = colors[name];
 			break;
 		case Sleep:
-			if (colors.count(name) <= 0) {
-				colors[name] = LoadImage("../assets/buffdebuff/sleep.png");
+			if (colors.find(name) == colors.end()) {
+				colors[name] = LoadImage((pathPrefix + "assets/buffdebuff/sleep.png").c_str());
 			}
-			tempColorImg = ImageCopy(colors[name]);
+			tempColorImg = colors[name];
 			break;
 		case Sick:
-			if (colors.count(name) <= 0) {
-				colors[name] = LoadImage("../assets/buffdebuff/sick.png");
+			if (colors.find(name) == colors.end()) {
+				colors[name] = LoadImage((pathPrefix + "assets/buffdebuff/sick.png").c_str());
 			}
-			tempColorImg = ImageCopy(colors[name]);
+			tempColorImg = colors[name];
 			break;
 	}
 
@@ -339,33 +348,32 @@ void Sprite::load(Context& ctx) {
 	if (heightRatio < widthRatio) {
 		ratio = heightRatio;
 	}
-	if (ratio != 1) {
-		ImageResizeNN(&tempColorImg, (int)((float)tempColorImg.width * ratio), (int)((float)tempColorImg.height * ratio));
-	}
-	Texture2D tempColorTex = LoadTextureFromImage(tempColorImg);
-	colorTex = new Texture2D{tempColorTex.id, tempColorTex.width, tempColorTex.height, tempColorTex.mipmaps, tempColorTex.format};
-	UnloadImage(tempColorImg);
 
-	if (hasGray) {
-		if (ratio != 1) {
-			// Assume the color and gray images are the same size
-			ImageResizeNN(&tempGrayImg, (int)((float)tempGrayImg.width * ratio), (int)((float)tempGrayImg.height * ratio));
+	auto texColorKey = TextureKey{ratio, 0, name};
+	auto texGrayKey = TextureKey{ratio, 1, name};
+	if (textures.find(texColorKey) == textures.end()) {
+		Image newTempColorImg = ImageCopy(tempColorImg);
+		ImageResizeNN(&newTempColorImg, (int)((float)newTempColorImg.width * ratio), (int)((float)newTempColorImg.height * ratio));
+		textures[texColorKey] = LoadTextureFromImage(newTempColorImg);
+		UnloadImage(newTempColorImg);
+
+		if (hasGray) {
+			Image newTempGrayImg = ImageCopy(tempGrayImg);
+			ImageResizeNN(&newTempGrayImg, (int)((float)newTempGrayImg.width * ratio), (int)((float)newTempGrayImg.height * ratio));
+			textures[texGrayKey] = LoadTextureFromImage(newTempGrayImg);
+			UnloadImage(newTempGrayImg);
 		}
-		Texture2D tempGrayTex = LoadTextureFromImage(tempGrayImg);
-		grayTex = new Texture2D{tempGrayTex.id, tempGrayTex.width, tempGrayTex.height, tempGrayTex.mipmaps, tempGrayTex.format};
-		UnloadImage(tempGrayImg);
+	}
+
+	colorTex = textures[texColorKey];
+	if (hasGray) {
+		grayTex = textures[texGrayKey];
+	} else {
+		options.DefaultColor = WHITE;
 	}
 }
 
 void Sprite::unload() {
-	if (colorTex != nullptr) {
-		UnloadTexture(*colorTex);
-		delete (colorTex);
-		colorTex = nullptr;
-	}
-	if (grayTex != nullptr) {
-		UnloadTexture(*grayTex);
-		delete (grayTex);
-		grayTex = nullptr;
-	}
+	colorTex = {};
+	grayTex = {};
 }

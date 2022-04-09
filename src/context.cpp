@@ -72,6 +72,43 @@ void Context::Draw() {
 	if (Menu.currentMenu >= 0) {
 		Menu.menus.at(Menu.currentMenu)->DrawComponent(*this, 0, 0);
 	}
+	for (auto component: this->animsToDelete) {
+		this->anims.erase(component);
+		delete(component);
+	}
+	this->animsToDelete.clear();
+	for (auto component: this->anims) {
+		component->Update(*this);
+		component->DrawComponent(*this, 0, 0);
+	}
+}
+
+Component* Context::GetComponent(std::string name) {
+	if (byName.find(name) != byName.end()) {
+		return byName.at(name);
+	}
+	return nullptr;
+}
+
+void Context::RegisterComponent(std::string name, Component* component) {
+	if (byName.find(name) != byName.end()) {
+		byName.at(name)->Unregister(*this);
+	}
+	byName[name] = component;
+}
+
+void Context::UnregisterComponent(std::string name) {
+	if (byName.find(name) != byName.end()) {
+		byName.erase(name);
+	}
+}
+
+void Context::AddAnimation(Component* component) {
+	this->anims.insert(component);
+}
+
+void Context::RemoveAnimation(Component* component) {
+	this->animsToDelete.push_back(component);
 }
 
 void Context::Menus::initialize(Context& ctx) {

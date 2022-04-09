@@ -7,6 +7,7 @@
 #include "state.h"
 #include "statuseffect.h"
 #include "gui/menus.h"
+#include "cmath"
 
 State::State(Context& ctx) : ctx(ctx) {}
 
@@ -25,8 +26,8 @@ void State::NewGame() {
 	this->CurrentRun.EnemiesKilled = 0;
 	this->CurrentRun.BossesKilled = 0;
 	this->CurrentRun.PlayerCharacter.Experience = 0;
-	this->CurrentRun.PlayerCharacter.Health = 200;
-	this->CurrentRun.PlayerCharacter.CurrentHealth = 200;
+	this->CurrentRun.PlayerCharacter.Health = 50;
+	this->CurrentRun.PlayerCharacter.CurrentHealth = 50;
 	this->CurrentRun.PlayerCharacter.PhysicalAttack = 10;
 	this->CurrentRun.PlayerCharacter.SpecialAttack = 10;
 	this->CurrentRun.PlayerCharacter.PhysicalArmor = 10;
@@ -233,7 +234,71 @@ void State::NextRoom() {
 	}
 }
 
+CharacterSource State::GetCharacterSource(Character* character) {
+	auto charSource = CharacterSource::PlayerSource;
+	if (character != &ctx.GameState->CurrentRun.PlayerCharacter) {
+		for (int i = 0; i < ctx.GameState->CurrentBattle.Enemies.size(); i++) {
+			if (character == ctx.GameState->CurrentBattle.Enemies[i]) {
+				charSource = (CharacterSource)i;
+				break;
+			}
+		}
+	}
+	return charSource;
+}
+
+void State::FloatDamageNumber(CharacterSource charSource, bool hasSprite, SpriteName spriteName, int damageDone) {
+	if (charSource == CharacterSource::PlayerSource) {
+		auto color = RED;
+		if (damageDone < 0) {
+			color = GREEN;
+		}
+		auto healthBarLocation = ctx.GetComponent("CombatHealthBar");
+		auto panel = new FloatingHorizontalPanel(ctx,
+			{.WidthScale = 0.2, .HeightScale = 0.06, .DefaultColor = WHITE},
+			(ctx.Screen.Width() * 0.6 * GetRandomDouble()) + (ctx.Screen.Width() * 0.1),
+			ctx.Screen.Height() * 0.44,
+			2.0);
+		if (hasSprite) {
+			*panel += new Sprite(ctx, spriteName, {.WidthScale = .3, .HeightScale = 1, .DefaultColor = WHITE});
+		}
+		*panel += new Label(ctx, TextFormat("%i", abs(damageDone)), {.WidthScale = .7, .HeightScale = 1, .DefaultColor = color});;
+		ctx.AddAnimation(panel);
+	} else {
+		Component* enemyLocation;
+		switch (charSource) {
+			case Enemy1Source: {
+				enemyLocation = ctx.GetComponent("CombatEnemy1");
+				break;
+			}
+			case Enemy2Source: {
+				enemyLocation = ctx.GetComponent("CombatEnemy2");
+				break;
+			}
+			case Enemy3Source:{
+				enemyLocation = ctx.GetComponent("CombatEnemy3");
+				break;
+			}
+		}
+		auto color = WHITE;
+		if (damageDone < 0) {
+			color = GREEN;
+		}
+		auto panel = new FloatingHorizontalPanel(ctx,
+			{.WidthScale = 0.1, .HeightScale = 0.06, .DefaultColor = WHITE},
+			enemyLocation->X() + (enemyLocation->Width(ctx) * 0.7 * GetRandomDouble()),
+			(ctx.Screen.Height() * 0.05) + (enemyLocation->Height(ctx) * 0.5 * GetRandomDouble()) + (enemyLocation->Height(ctx) * 0.25),
+			2.0);
+		if (hasSprite) {
+			*panel += new Sprite(ctx, spriteName, {.WidthScale = .3, .HeightScale = 1, .DefaultColor = WHITE});
+		}
+		*panel += new Label(ctx, TextFormat("%i", abs(damageDone)), {.WidthScale = .7, .HeightScale = 1, .DefaultColor = color});
+		ctx.AddAnimation(panel);
+	}
+}
+
 void calculateAttack(Context& ctx, CharacterInstance& attacker, CharacterInstance& defender, double damage, RuneAttribute::AttackType attackType, RuneAttribute::Element element) {
+	auto defenderSource = ctx.GameState->GetCharacterSource(&defender.Parent);
 	for (auto statusEffects: ctx.GameState->CurrentBattle.StatusEffects) {
 		statusEffects->PreAttack(ctx, attacker);
 	}
@@ -277,6 +342,7 @@ void calculateAttack(Context& ctx, CharacterInstance& attacker, CharacterInstanc
 	if (defender.Parent.CurrentHealth < 0) {
 		defender.Parent.CurrentHealth = 0;
 	}
+	ctx.GameState->FloatDamageNumber(defenderSource, false, (SpriteName)0, damage);
 	for (auto statusEffects: ctx.GameState->CurrentBattle.StatusEffects) {
 		statusEffects->PostHit(ctx, defender, (int)damageDone);
 	}

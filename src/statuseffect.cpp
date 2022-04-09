@@ -18,7 +18,8 @@ void BuffLifesteal::PostHit(Context& ctx, CharacterInstance& character, StatusEf
 	if (&character.Parent != &instance.Target) {
 		return;
 	}
-	instance.Caster.CurrentHealth += (int)((double)damageReceived * Strength);
+	int healAmount = (int)((double)damageReceived * Strength);
+	instance.Caster.CurrentHealth += healAmount;
 	if (instance.Caster.CurrentHealth > instance.Caster.Health) {
 		instance.Caster.CurrentHealth = instance.Caster.Health;
 	}
@@ -27,7 +28,7 @@ Sprite* BuffLifesteal::GetSprite(Context& ctx, const Component::Options& options
 	return new Sprite(ctx, SpriteName::Lifesteal, options);
 }
 std::string BuffLifesteal::Description(Context& ctx) {
-	return TextFormat("Grants a buff giving %03.00f%% life steal for %i turns.", (float)Strength * 100.0f, Turns);
+	return TextFormat("Grants a buff giving %03.00f%% life steal for %i turns. ", (float)Strength * 100.0f, Turns);
 }
 bool BuffLifesteal::IsBuff(Context& ctx) { return true; }
 
@@ -48,7 +49,7 @@ Sprite* BuffLucky::GetSprite(Context& ctx, const Component::Options& options) {
 	return new Sprite(ctx, SpriteName::Lucky, options);
 }
 std::string BuffLucky::Description(Context& ctx) {
-	return TextFormat("Grants a buff giving %03.00f%% additional Critical Chance for %i turns.", (float)CritChance * 100.0f, Turns);
+	return TextFormat("Grants a buff giving %03.00f%% additional Critical Chance for %i turns. ", (float)CritChance * 100.0f, Turns);
 }
 bool BuffLucky::IsBuff(Context& ctx) { return true; }
 
@@ -71,7 +72,7 @@ Sprite* BuffAdrenaline::GetSprite(Context& ctx, const Component::Options& option
 	return new Sprite(ctx, SpriteName::Adrenaline, options);
 }
 std::string BuffAdrenaline::Description(Context& ctx) {
-	return TextFormat("Grants a buff boosting attack by %03.00f%% for %i turns", (float)Strength, Turns);
+	return TextFormat("Grants a buff boosting attack by %03.00f%% for %i turns. ", (float)Strength, Turns);
 }
 bool BuffAdrenaline::IsBuff(Context& ctx) { return true; }
 
@@ -117,13 +118,13 @@ Sprite* BuffElemental::GetSprite(Context& ctx, const Component::Options& options
 std::string BuffElemental::Description(Context& ctx) {
 	switch (Element) {
 		case RuneAttribute::Electric:
-			return TextFormat("Grants a buff boosting Electric resistance by %03.00f%% for %i turns.", (float)Resistance, Turns);
+			return TextFormat("Grants a buff boosting Electric resistance by %03.00f%% for %i turns. ", (float)Resistance, Turns);
 		case RuneAttribute::Water:
-			return TextFormat("Grants a buff boosting Water resistance by %03.00f%% for %i turns.", (float)Resistance, Turns);
+			return TextFormat("Grants a buff boosting Water resistance by %03.00f%% for %i turns. ", (float)Resistance, Turns);
 		case RuneAttribute::Wind:
-			return TextFormat("Grants a buff boosting Wind resistance by %03.00f%% for %i turns.", (float)Resistance, Turns);
+			return TextFormat("Grants a buff boosting Wind resistance by %03.00f%% for %i turns. ", (float)Resistance, Turns);
 		case RuneAttribute::Fire:
-			return TextFormat("Grants a buff boosting Fire resistance by %03.00f%% for %i turns.", (float)Resistance, Turns);
+			return TextFormat("Grants a buff boosting Fire resistance by %03.00f%% for %i turns. ", (float)Resistance, Turns);
 	}
 	return "";
 }
@@ -149,7 +150,7 @@ Sprite* DebuffPoison::GetSprite(Context& ctx, const Component::Options& options)
 	return new Sprite(ctx, SpriteName::Poison, options);
 }
 std::string DebuffPoison::Description(Context& ctx) {
-	return TextFormat("Applies a debuff applying %i poison damage for %i turns.", (int)Strength, Turns);
+	return TextFormat("Applies a debuff applying %i poison damage for %i turns. ", (int)Strength, Turns);
 }
 bool DebuffPoison::IsBuff(Context& ctx) { return false; }
 
@@ -160,7 +161,8 @@ StatusEffectInstance* DebuffBleed::GetInstance(Context& ctx, Character& target, 
 }
 void DebuffBleed::PreAttack(Context& ctx, CharacterInstance& character, StatusEffectInstance& instance) {
 	if (&character.Parent == &instance.Target) {
-		character.Parent.CurrentHealth -= character.MaxHealth * Strength;
+		int damageDone = character.MaxHealth * Strength;
+		character.Parent.CurrentHealth -= damageDone;
 		if (character.Parent.CurrentHealth < 0) {
 			character.Parent.CurrentHealth = 0;
 		}
@@ -173,7 +175,7 @@ Sprite* DebuffBleed::GetSprite(Context& ctx, const Component::Options& options) 
 	return new Sprite(ctx, SpriteName::Bleed, options);
 }
 std::string DebuffBleed::Description(Context& ctx) {
-	return TextFormat("Applies a debuff that causes %02.00f%% of max health damage per turn for %i turns.", (float)Strength * 100.0f, Turns);
+	return TextFormat("Applies a debuff that causes %02.00f%% of max health damage per turn for %i turns. ", (float)Strength * 100.0f, Turns);
 }
 bool DebuffBleed::IsBuff(Context& ctx) { return false; }
 
@@ -195,7 +197,7 @@ Sprite* DebuffSleep::GetSprite(Context& ctx, const Component::Options& options) 
 	return new Sprite(ctx, SpriteName::Sleep, options);
 }
 std::string DebuffSleep::Description(Context& ctx) {
-	return TextFormat("Applies a debuff preventing damage dealing for %i turns.", Turns);
+	return TextFormat("Applies a debuff preventing damage dealing for %i turns. ", Turns);
 }
 bool DebuffSleep::IsBuff(Context& ctx) { return false; }
 
@@ -207,7 +209,8 @@ StatusEffectInstance* DebuffSick::GetInstance(Context& ctx, Character& target, C
 void DebuffSick::PreAttack(Context& ctx, CharacterInstance& character, StatusEffectInstance& instance) {}
 void DebuffSick::PostAttack(Context& ctx, CharacterInstance& character, StatusEffectInstance& instance, int damageDealt) {
 	if (&character.Parent == &instance.Target) {
-		character.Parent.CurrentHealth -= (int)((double)damageDealt * Strength);
+		int damageDone = (int)((double)damageDealt * Strength);
+		character.Parent.CurrentHealth -= damageDone;
 		if (character.Parent.CurrentHealth < 0) {
 			character.Parent.CurrentHealth = 0;
 		}
@@ -219,6 +222,6 @@ Sprite* DebuffSick::GetSprite(Context& ctx, const Component::Options& options) {
 	return new Sprite(ctx, SpriteName::Sick, options);
 }
 std::string DebuffSick::Description(Context& ctx) {
-	return TextFormat("Applies a debuff reflecting %03.00f%% of damage dealt for %i turns.", (float)Strength * 100.0f, Turns);
+	return TextFormat("Applies a debuff reflecting %03.00f%% of damage dealt for %i turns. ", (float)Strength * 100.0f, Turns);
 }
 bool DebuffSick::IsBuff(Context& ctx) { return false; }

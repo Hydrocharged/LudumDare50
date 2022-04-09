@@ -11,14 +11,6 @@
 
 int maxExpBar2 = 10;
 
-void Menu::NewRuneMenuComponent::Update(Context& ctx) {
-	Component::Update(ctx);
-	auto ProgressLabel = (Label*)(this->Child(0)->Child(0));
-	auto ElapsedLabel = (Label*)(this->Child(0)->Child(2));
-	ProgressLabel->SetText(ctx, TextFormat("Progress: %s", ctx.GameState->CurrentRun.ProgressTimeString().c_str()));
-	ElapsedLabel->SetText(ctx, TextFormat("Current: %s", ctx.GameState->CurrentRun.ElapsedTimeString().c_str()));
-}
-
 void replacingRune0(Context& ctx, Component& component) {
 	ctx.GameState->CurrentRun.ReplacingIndex = (ctx.GameState->CurrentRun.ReplacingIndex == 0) ? -1 : 0;
 	ctx.Menu.ReloadNewRuneMenu(ctx);
@@ -75,9 +67,11 @@ Component* Menu::CreateNewRuneMenu(Context& ctx) {
 	*panel += runeRow;
 
 	// Time Row
-	*timeRow += new Label(ctx, "Progress: 10m 45.32s", {.WidthScale = .2, .HeightScale = .98, .DefaultColor = WHITE});
+	*timeRow += new FunctionLabel(ctx, {.WidthScale = .2, .HeightScale = .98, .DefaultColor = WHITE}, "Progress: 00h 00m 00.00s",
+		[](Context& ctx) -> std::string { return TextFormat("Progress: %s", ctx.GameState->CurrentRun.ProgressTimeString().c_str()); });
 	*timeRow += new HorizontalPanel(ctx, {.WidthScale = .55, .HeightScale = 1});
-	*timeRow += new Label(ctx, "Current: 11m 17.43s", {.WidthScale = .2, .HeightScale = .98, .DefaultColor = WHITE});
+	*timeRow += new FunctionLabel(ctx, {.WidthScale = .2, .HeightScale = .98, .DefaultColor = WHITE}, "Current: 00h 00m 00.00s",
+		[](Context& ctx) -> std::string { return TextFormat("Current: %s", ctx.GameState->CurrentRun.ElapsedTimeString().c_str()); });
 
 	// New Rune Row
 	auto runeButtons = Component::Options{.WidthScale = .2, .HeightScale = .2, .DefaultColor = ctx.Colors.Button, .HoverColor = ctx.Colors.ButtonHover};
@@ -88,17 +82,19 @@ Component* Menu::CreateNewRuneMenu(Context& ctx) {
 		.DefaultColor = ctx.Colors.Button});
 	*newRuneRow += (new Button(ctx, runeButtons))->AddChild(new Label(ctx, "Confirm", {.WidthScale = .8, .HeightScale = .8, .DefaultColor = WHITE, .OnClick = newRuneConfirmClick}));
 
-	// Experience Bar
+	// Health Bar
 	auto innerHealthBar = new HorizontalPanel(ctx, {.WidthScale = 1, .HeightScale = 1});
 	*healthBar += innerHealthBar;
-	*innerHealthBar += new Label(ctx, TextFormat("Health %i/%i", ctx.GameState->CurrentRun.PlayerCharacter.CurrentHealth, ctx.GameState->CurrentRun.PlayerCharacter.Health), {.WidthScale = .1, .HeightScale = .95, .DefaultColor = WHITE});
-	*innerHealthBar += new HorizontalPanel(ctx, {.WidthScale = .85, .HeightScale = 1});
+	*innerHealthBar += new FunctionLabel(ctx, {.WidthScale = .2, .HeightScale = .95, .DefaultColor = WHITE}, "Health 0000/0000",
+		 [](Context& ctx) -> std::string { return TextFormat("Health %i/%i", ctx.GameState->CurrentRun.PlayerCharacter.CurrentHealth, ctx.GameState->CurrentRun.PlayerCharacter.Health); });
+	*innerHealthBar += new HorizontalPanel(ctx, {.WidthScale = .75, .HeightScale = 1});
 
 	// Experience Bar
 	auto innerEXPBar = new HorizontalPanel(ctx, {.WidthScale = 1, .HeightScale = 1});
 	*experienceBar += innerEXPBar;
-	*innerEXPBar += new Label(ctx, TextFormat("Level %i", ctx.GameState->CurrentRun.PlayerCharacter.Level(ctx)), {.WidthScale = .1, .HeightScale = .95, .DefaultColor = WHITE});
-	*innerEXPBar += new HorizontalPanel(ctx, {.WidthScale = .85, .HeightScale = 1});
+	*innerEXPBar += new FunctionLabel(ctx, {.WidthScale = .13, .HeightScale = .95, .DefaultColor = WHITE}, "Level 000",
+		[](Context& ctx) -> std::string { return TextFormat("Level %i",ctx.GameState->CurrentRun.PlayerCharacter.Level(ctx)); });
+	*innerEXPBar += new HorizontalPanel(ctx, {.WidthScale = .82, .HeightScale = 1});
 
 	// Rune Row
 	auto runeCol1 = new VerticalPanel(ctx, {.WidthScale = .33, .HeightScale = 1});

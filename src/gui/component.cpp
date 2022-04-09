@@ -4,9 +4,14 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+#include "context.h"
 #include "gui/component.h"
 
 Component::~Component() {
+	if (registeredContext != nullptr) {
+		registeredContext->UnregisterComponent(registeredName);
+		registeredContext = nullptr;
+	}
 	for (Component* child: *children) {
 		delete (child);
 	}
@@ -55,6 +60,24 @@ void Component::Update(Context& ctx) {
 Component* Component::AddChild(Component* child) {
 	child->parent = this;
 	children->push_back(child);
+	return this;
+}
+
+Component* Component::Register(Context& ctx, std::string name) {
+	if (registeredContext != nullptr) {
+		registeredContext->UnregisterComponent(registeredName);
+	}
+	registeredContext = &ctx;
+	registeredName = name;
+	ctx.RegisterComponent(name, this);
+	return this;
+}
+
+Component* Component::Unregister(Context& ctx) {
+	if (registeredContext != nullptr) {
+		registeredContext->UnregisterComponent(registeredName);
+		registeredContext = nullptr;
+	}
 	return this;
 }
 

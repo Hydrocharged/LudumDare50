@@ -86,8 +86,25 @@ private:
 	void unload();
 
 	SpriteName name;
-	Texture2D* colorTex = nullptr;
-	Texture2D* grayTex = nullptr;
+	Texture2D colorTex = {};
+	Texture2D grayTex = {};
+};
+
+struct TextureKey {
+public:
+	float Ratio;
+	char IsGray;
+	SpriteName Name;
+
+	bool operator<(const TextureKey& rhs) const {
+		if (this->Name != rhs.Name) {
+			return this->Name < rhs.Name;
+		} else if (this->IsGray != rhs.IsGray) {
+			return this->IsGray < rhs.IsGray;
+		} else {
+			return this->Ratio < rhs.Ratio;
+		}
+	}
 };
 
 #endif //SPRITE_H

@@ -21,13 +21,11 @@ namespace Menu {
 	class CombatMenuComponent : public VerticalPanel {
 	public:
 		CombatMenuComponent(Context& ctx, const Component::Options& options) : VerticalPanel(ctx, options) {}
-		void Update(Context& ctx) override;
 	};
 
 	class NewRuneMenuComponent : public VerticalPanel {
 	public:
 		NewRuneMenuComponent(Context& ctx, const Component::Options& options) : VerticalPanel(ctx, options) {}
-		void Update(Context& ctx) override;
 	};
 
 	class LevelUpMenuComponent : public VerticalPanel {

@@ -22,6 +22,13 @@ namespace Chances {
 	const double RarityLegendary = 0.00015604169167720937; // 1%
 }
 
+enum CharacterSource {
+	PlayerSource = -1,
+	Enemy1Source = 0,
+	Enemy2Source = 1,
+	Enemy3Source = 2,
+};
+
 class State {
 	friend class Context;
 
@@ -41,13 +48,13 @@ public:
 			int hours = ProgressTime / 3600;
 			int minutes = (int)(ProgressTime / 60) % 60;
 			float seconds = (float)(ProgressTime - (double)((hours * 3600) + (minutes * 60)));
-			return TextFormat("%ih %02im %02.02fs", hours, minutes, seconds);
+			return TextFormat("%02ih %02im %02.02fs", hours, minutes, seconds);
 		}
 		std::string ElapsedTimeString() {
 			int hours = ElapsedTime / 3600;
 			int minutes = (int)(ElapsedTime / 60) % 60;
 			float seconds = (float)(ElapsedTime - (double)((hours * 3600) + (minutes * 60)));
-			return TextFormat("%ih %02im %02.02fs", hours, minutes, seconds);
+			return TextFormat("%02ih %02im %02.02fs", hours, minutes, seconds);
 		}
 	} CurrentRun;
 
@@ -73,6 +80,8 @@ public:
 	void NextTurn();
 	void GameOver();
 	void Attack(int runeIndex);
+	CharacterSource GetCharacterSource(Character* character);
+	void FloatDamageNumber(CharacterSource charSource, bool hasSprite, SpriteName spriteName, int damageDone);
 
 private:
 	explicit State(Context& ctx);
