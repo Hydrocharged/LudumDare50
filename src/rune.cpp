@@ -32,7 +32,7 @@ Rune::Rune(Context& ctx, RuneAttribute::Rarity rarity) {
 	AdditionalLevel = 0;
 	AttackType = (GetRandomDouble() <= 0.5) ? RuneAttribute::Physical : RuneAttribute::Special;
 	Rarity = rarity;
-	double points = 40 + (ctx.GameState->CurrentRun.ElapsedTime * 0.6);
+	double points = 40 + (ctx.GameState->CurrentRun.ElapsedTime * 0.4);
 	switch (rarity) {
 		case RuneAttribute::Common:
 			points *= 1;
@@ -52,7 +52,7 @@ Rune::Rune(Context& ctx, RuneAttribute::Rarity rarity) {
 	}
 
 	double probability = GetRandomDouble();
-	if (probability < 0.08) {
+	if (probability < 0.05) {
 		Target = RuneAttribute::Self;
 		points *= 2;
 	} else if (probability <= 0.15) {
@@ -92,42 +92,42 @@ Rune::Rune(Context& ctx, RuneAttribute::Rarity rarity) {
 	for (int i = 0; i < buffCount; i++) {
 		probability = GetRandomDouble();
 		if (probability <= 0.25) {
-			double strength = (0.3 * points) * GetRandomDouble();
+			double strength = points * GetRandomRange(0.1, 0.3);
 			points -= strength;
-			Buffs.push_back(new BuffLifesteal(ctx, (strength / 100.0), (int)(GetRandomDouble() * 10) + 2));
+			Buffs.push_back(new BuffLifesteal(ctx, (strength / 100.0), GetRandomRange(2, 2 + (int)ctx.GameState->CurrentRun.ElapsedTime / 60)));
 		} else if (probability <= 0.50) {
-			double strength = GetRandomDouble();
+			double strength = GetRandomRange(0.2, 1.0);
 			points -= (0.3 * points) * strength;
-			Buffs.push_back(new BuffLucky(ctx, strength, (int)(GetRandomDouble() * 10) + 1));
+			Buffs.push_back(new BuffLucky(ctx, strength, GetRandomRange(2, 2 + (int)ctx.GameState->CurrentRun.ElapsedTime / 60)));
 		} else if (probability <= 0.75) {
-			double strength = (0.3 * points) * GetRandomDouble();
+			double strength = (0.3 * points) * GetRandomRange(0.1, 0.3);
 			points -= strength;
-			Buffs.push_back(new BuffAdrenaline(ctx, strength / 100.0, (int)(GetRandomDouble() * 10) + 1));
+			Buffs.push_back(new BuffAdrenaline(ctx, strength / 100.0, GetRandomRange(2, 2 + (int)ctx.GameState->CurrentRun.ElapsedTime / 60)));
 		} else {
-			double strength = (0.3 * points) * GetRandomDouble();
+			double strength = points * GetRandomRange(0.1, 0.3);
 			points -= strength;
-			Buffs.push_back(new BuffElemental(ctx, (RuneAttribute::Element)GetRandomValue(1, 4), strength, (int)(GetRandomDouble() * 10) + 2));
+			Buffs.push_back(new BuffElemental(ctx, (RuneAttribute::Element)GetRandomValue(1, 4), strength, GetRandomRange(3, 3 + (int)ctx.GameState->CurrentRun.ElapsedTime / 45)));
 		}
 	}
 
 	for (int i = 0; i < debuffCount; i++) {
 		probability = GetRandomDouble();
 		if (probability <= 0.25) {
-			double strength = (0.2 * points) * GetRandomDouble();
+			double strength = points * GetRandomRange(0.04, 0.2);
 			points -= strength * 2;
-			Debuffs.push_back(new DebuffPoison(ctx, strength, (int)(GetRandomDouble() * 10) + 1));
+			Debuffs.push_back(new DebuffPoison(ctx, strength, GetRandomRange(1, 1 + (int)ctx.GameState->CurrentRun.ElapsedTime / 60)));
 		} else if (probability <= 0.50) {
-			double strength = GetRandomDouble();
+			double strength = GetRandomRange(0.5, 1.0);
 			points -= points * strength;
-			Debuffs.push_back(new DebuffBleed(ctx, 0.25 * strength, (int)(GetRandomDouble() * 5) + 1));
+			Debuffs.push_back(new DebuffBleed(ctx, 0.25 * strength, GetRandomRange(1, 1 + (int)ctx.GameState->CurrentRun.ElapsedTime / 240)));
 		} else if (probability <= 0.75) {
 			double strength = GetRandomDouble();
 			points -= points * strength;
-			Debuffs.push_back(new DebuffSleep(ctx, (int)strength + 1));
+			Debuffs.push_back(new DebuffSleep(ctx, GetRandomRange(1, 1 + (int)ctx.GameState->CurrentRun.ElapsedTime / 480)));
 		} else {
-			double strength = 0.5 * GetRandomDouble();
-			points -= points * strength;
-			Debuffs.push_back(new DebuffSick(ctx, strength, (int)(GetRandomDouble() * 10) + 2));
+			double strength = GetRandomRange(0.05, 0.3);
+			points -= points * strength * 2;
+			Debuffs.push_back(new DebuffSick(ctx, strength, (2, 2 + (int)ctx.GameState->CurrentRun.ElapsedTime / 180)));
 		}
 	}
 
@@ -137,8 +137,8 @@ Rune::Rune(Context& ctx, RuneAttribute::Rarity rarity) {
 		points *= 0.2;
 	} else if (probability <= 0.1) {
 		Element = RuneAttribute::Omni;
-	} else if (probability <= 0.5) {
-		Element = (RuneAttribute::Element)GetRandomValue(1, 4);
+	} else if (probability <= 0.7) {
+		Element = (RuneAttribute::Element)GetRandomRange(1, 4);
 	} else {
 		Element = RuneAttribute::NoElement;
 	}

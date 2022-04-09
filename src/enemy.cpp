@@ -13,51 +13,53 @@ Enemy::Enemy(Context& ctx, bool isBoss) {
 	spriteName = (SpriteName)GetRandomValue(0, 5);
 	EncounterTime = ctx.GameState->CurrentRun.ElapsedTime;
 	IsBoss = isBoss;
-	double points = 40 + (EncounterTime * 0.6);
+	double points = 36 + EncounterTime * 0.7;
 	if (isBoss) {
 		Name = "Boss " + Name;
 		points *= 1.2;
 	}
 
-	// Resistances go from -200% to 200% and give or remove 30% points at the extremes
+	// Resistances go from -110% to 110% and give or remove 10% points at the extremes
 	double resistance = GetRandomDouble();
-	points *= (((resistance * 0.6) - 0.3) * -1.0) + 1.0;
-	fireResistance = (4 * resistance) - 2;
+	points *= (((resistance * 0.2) - 0.1) * -1.0) + 1.0;
+	fireResistance = (2.2 * resistance) - 1.1;
 	resistance = GetRandomDouble();
-	points *= (((resistance * 0.6) - 0.3) * -1.0) + 1.0;
-	waterResistance = (4 * resistance) - 2;
+	points *= (((resistance * 0.2) - 0.1) * -1.0) + 1.0;
+	waterResistance = (2.2 * resistance) - 1.1;
 	resistance = GetRandomDouble();
-	points *= (((resistance * 0.6) - 0.3) * -1.0) + 1.0;
-	electricResistance = (4 * resistance) - 2;
+	points *= (((resistance * 0.2) - 0.1) * -1.0) + 1.0;
+	electricResistance = (2.2 * resistance) - 1.1;
 	resistance = GetRandomDouble();
-	points *= (((resistance * 0.6) - 0.3) * -1.0) + 1.0;
-	windResistance = (4 * resistance) - 2;
+	points *= (((resistance * 0.2) - 0.1) * -1.0) + 1.0;
+	windResistance = (2.2 * resistance) - 1.1;
 
-	double pointDelta = (points * 0.5) * GetRandomDouble();
+	double pointDelta = points * GetRandomRange(0.4, 0.5);
 	points -= pointDelta;
 	Health = 10.0 * pointDelta + 1.0;
 	CurrentHealth = Health;
 
-	pointDelta = (points * 0.5) * GetRandomDouble();
+	pointDelta = points * GetRandomRange(0.4, 0.5);
 	points -= pointDelta;
-	double shift = GetRandomDouble();
-	PhysicalAttack = pointDelta * shift + 1;
-	SpecialAttack = pointDelta * (1 - shift) + 1;
+	double* dist = GetRandomDistribution(pointDelta, 2);
+	PhysicalAttack = 1 + dist[0];
+	SpecialAttack = 1 + dist[1];
+	delete[] dist;
 
-	pointDelta = (points * 0.5) * GetRandomDouble();
+	pointDelta = points * GetRandomRange(0.4, 0.5);
 	points -= pointDelta;
-	shift = GetRandomDouble();
-	PhysicalArmor = pointDelta * shift + 1;
-	SpecialArmor = pointDelta * (1 - shift) + 1;
+	dist = GetRandomDistribution(pointDelta, 2);
+	PhysicalArmor = 1 + dist[0];
+	SpecialArmor = 1 + dist[1];
+	delete[] dist;
 
-	pointDelta = (points * 0.5) * GetRandomDouble();
+	pointDelta = points * GetRandomRange(0.4, 0.5);
 	points -= pointDelta;
 	Speed = pointDelta;
 	BaseDamage = points;
 }
 
 int Enemy::Level(Context& ctx) {
-	return (int)(EncounterTime / 10) + 1;
+	return (int)(EncounterTime / 5) + 1;
 }
 
 double Enemy::FireResistance(Context& ctx) {
@@ -145,22 +147,20 @@ Component* Enemy::GenerateComponent(Context& ctx, const Component::Options& opti
 
 	// Sprite Row
 	*spriteRow += GetSprite(ctx, {.WidthScale = .7, .HeightScale = 1});
-	auto attackArmorColumn = new VerticalPanel(ctx, {.WidthScale = .3, .HeightScale = 1});
+	auto attackArmorColumn = new HorizontalPanel(ctx, {.WidthScale = .3, .HeightScale = .98});
 	*spriteRow += attackArmorColumn;
-	if (PhysicalAttack > SpecialAttack) {
-		*attackArmorColumn += new Sprite(ctx, SpriteName::PhysicalAttack, {.WidthScale = 1, .HeightScale = .25});
-		*attackArmorColumn += new Label(ctx, TextFormat("%i", PhysicalAttack), {.WidthScale = 1, .HeightScale = .25, .DefaultColor = WHITE});
-	} else {
-		*attackArmorColumn += new Sprite(ctx, SpriteName::SpecialAttack, {.WidthScale = 1, .HeightScale = .25});
-		*attackArmorColumn += new Label(ctx, TextFormat("%i", SpecialAttack), {.WidthScale = 1, .HeightScale = .25, .DefaultColor = WHITE});
-	}
-	if (PhysicalArmor > SpecialArmor) {
-		*attackArmorColumn += new Sprite(ctx, SpriteName::PhysicalArmor, {.WidthScale = 1, .HeightScale = .25});
-		*attackArmorColumn += new Label(ctx, TextFormat("%i", PhysicalArmor), {.WidthScale = 1, .HeightScale = .25, .DefaultColor = WHITE});
-	} else {
-		*attackArmorColumn += new Sprite(ctx, SpriteName::SpecialArmor, {.WidthScale = 1, .HeightScale = .25});
-		*attackArmorColumn += new Label(ctx, TextFormat("%i", SpecialArmor), {.WidthScale = 1, .HeightScale = .25, .DefaultColor = WHITE});
-	}
+	auto physicalColumn = new VerticalPanel(ctx, {.WidthScale = .5, .HeightScale = 1});
+	auto specialColumn = new VerticalPanel(ctx, {.WidthScale = .5, .HeightScale = 1});
+	*attackArmorColumn += physicalColumn;
+	*attackArmorColumn += specialColumn;
+	*physicalColumn += new Sprite(ctx, SpriteName::PhysicalAttack, {.WidthScale = 1, .HeightScale = .25});
+	*physicalColumn += new Label(ctx, TextFormat("%i", (int)((PhysicalAttack * BaseDamage) / ctx.GameState->CurrentRun.PlayerCharacter.PhysicalArmor)), {.WidthScale = 1, .HeightScale = .25, .DefaultColor = WHITE});
+	*specialColumn += new Sprite(ctx, SpriteName::SpecialAttack, {.WidthScale = 1, .HeightScale = .25});
+	*specialColumn += new Label(ctx, TextFormat("%i", (int)((SpecialAttack * BaseDamage) / ctx.GameState->CurrentRun.PlayerCharacter.SpecialArmor)), {.WidthScale = 1, .HeightScale = .25, .DefaultColor = WHITE});
+	*physicalColumn += new Sprite(ctx, SpriteName::PhysicalArmor, {.WidthScale = 1, .HeightScale = .25});
+	*physicalColumn += new Label(ctx, TextFormat("%i", PhysicalArmor), {.WidthScale = 1, .HeightScale = .25, .DefaultColor = WHITE});
+	*specialColumn += new Sprite(ctx, SpriteName::SpecialArmor, {.WidthScale = 1, .HeightScale = .25});
+	*specialColumn += new Label(ctx, TextFormat("%i", SpecialArmor), {.WidthScale = 1, .HeightScale = .25, .DefaultColor = WHITE});
 
 	// Resistances Row
 	auto resistanceSpriteOption = Component::Options{.WidthScale = .1, .HeightScale = 1};

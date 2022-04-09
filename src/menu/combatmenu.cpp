@@ -13,16 +13,6 @@
 
 int maxExperienceBar = 10;
 
-void Menu::CombatMenuComponent::Update(Context& ctx) {
-	Component::Update(ctx);
-	auto ProgressLabel = (Label*)(this->Child(0)->Child(0));
-	auto ElapsedLabel = (Label*)(this->Child(0)->Child(2));
-	auto HealthLabel = (Label*)(this->Child(2)->Child(0)->Child(0));
-	ProgressLabel->SetText(ctx, TextFormat("Progress: %s", ctx.GameState->CurrentRun.ProgressTimeString().c_str()));
-	ElapsedLabel->SetText(ctx, TextFormat("Current: %s", ctx.GameState->CurrentRun.ElapsedTimeString().c_str()));
-	HealthLabel->SetText(ctx, TextFormat("Health %i/%i", ctx.GameState->CurrentRun.PlayerCharacter.CurrentHealth, ctx.GameState->CurrentRun.PlayerCharacter.Health));
-}
-
 void attackingRune0(Context& ctx, Component& component) {
 	ctx.GameState->Attack(0);
 }
@@ -51,36 +41,38 @@ Component* Menu::CreateCombatMenu(Context& ctx) {
 	auto panel = new Menu::CombatMenuComponent(ctx, {.WidthScale = 1, .HeightScale = 1});
 	auto timeRow = new HorizontalPanel(ctx, {.WidthScale = 1, .HeightScale = .05});
 	auto enemyRow = new HorizontalPanel(ctx, {.WidthScale = 1, .HeightScale = .39});
-	auto healthBar = new ProgressBar(ctx, {.WidthScale = .995, .HeightScale = .033, .DefaultColor = ctx.Colors.HealthBar}, &ctx.GameState->CurrentRun.PlayerCharacter.Health, &ctx.GameState->CurrentRun.PlayerCharacter.CurrentHealth);
+	auto healthBar = (new ProgressBar(ctx, {.WidthScale = .995, .HeightScale = .033, .DefaultColor = ctx.Colors.HealthBar}, &ctx.GameState->CurrentRun.PlayerCharacter.Health, &ctx.GameState->CurrentRun.PlayerCharacter.CurrentHealth))->Register(ctx, "CombatHealthBar");
 	auto experienceBar = new ProgressBar(ctx, {.WidthScale = .995, .HeightScale = .033, .DefaultColor = ctx.Colors.ExperienceBar}, &maxExperienceBar, &ctx.GameState->CurrentRun.PlayerCharacter.Experience);
 	auto runeRow = new HorizontalPanel(ctx, {.WidthScale = 1, .HeightScale = .49});
 	*panel += timeRow;
 	*panel += enemyRow;
 	*panel += healthBar;
-	*panel += new HorizontalPanel(ctx, {.WidthScale = 1, .HeightScale = .004});;
+	*panel += new HorizontalPanel(ctx, {.WidthScale = 1, .HeightScale = .004});
 	*panel += experienceBar;
 	*panel += runeRow;
 
 	// Time Row
-	*timeRow += new Label(ctx, "Progress: 10m 45.32s", {.WidthScale = .2, .HeightScale = .98, .DefaultColor = WHITE});
+	*timeRow += new FunctionLabel(ctx, {.WidthScale = .2, .HeightScale = .98, .DefaultColor = WHITE}, "Progress: 00h 00m 00.00s",
+		[](Context& ctx) -> std::string { return TextFormat("Progress: %s", ctx.GameState->CurrentRun.ProgressTimeString().c_str()); });
 	*timeRow += new HorizontalPanel(ctx, {.WidthScale = .55, .HeightScale = 1});
-	*timeRow += new Label(ctx, "Current: 11m 17.43s", {.WidthScale = .2, .HeightScale = .98, .DefaultColor = WHITE});
+	*timeRow += new FunctionLabel(ctx, {.WidthScale = .2, .HeightScale = .98, .DefaultColor = WHITE}, "Current: 00h 00m 00.00s",
+		[](Context& ctx) -> std::string { return TextFormat("Current: %s", ctx.GameState->CurrentRun.ElapsedTimeString().c_str()); });
 
 	// Enemy Row
 	if (ctx.GameState->CurrentBattle.Enemies.size() == 1) {
 		*enemyRow += new VerticalPanel(ctx, {.WidthScale = .3, .HeightScale = 1});
-		*enemyRow += ctx.GameState->CurrentBattle.Enemies.at(0)->GenerateComponent(ctx, {.WidthScale = .3, .HeightScale = .9, .DefaultColor = ctx.Colors.EnemyBackground});
+		*enemyRow += ctx.GameState->CurrentBattle.Enemies.at(0)->GenerateComponent(ctx, {.WidthScale = .3, .HeightScale = .9, .DefaultColor = ctx.Colors.EnemyBackground})->Register(ctx, "CombatEnemy1");
 		*enemyRow += new VerticalPanel(ctx, {.WidthScale = .3, .HeightScale = 1});
 	} else if (ctx.GameState->CurrentBattle.Enemies.size() == 2) {
 		*enemyRow += new VerticalPanel(ctx, {.WidthScale = .1, .HeightScale = 1});
-		*enemyRow += ctx.GameState->CurrentBattle.Enemies.at(0)->GenerateComponent(ctx, {.WidthScale = .3, .HeightScale = .9, .DefaultColor = ctx.Colors.EnemyBackground});
+		*enemyRow += ctx.GameState->CurrentBattle.Enemies.at(0)->GenerateComponent(ctx, {.WidthScale = .3, .HeightScale = .9, .DefaultColor = ctx.Colors.EnemyBackground})->Register(ctx, "CombatEnemy1");
 		*enemyRow += new VerticalPanel(ctx, {.WidthScale = .1, .HeightScale = 1});
-		*enemyRow += ctx.GameState->CurrentBattle.Enemies.at(1)->GenerateComponent(ctx, {.WidthScale = .3, .HeightScale = .9, .DefaultColor = ctx.Colors.EnemyBackground});
+		*enemyRow += ctx.GameState->CurrentBattle.Enemies.at(1)->GenerateComponent(ctx, {.WidthScale = .3, .HeightScale = .9, .DefaultColor = ctx.Colors.EnemyBackground})->Register(ctx, "CombatEnemy2");
 		*enemyRow += new VerticalPanel(ctx, {.WidthScale = .1, .HeightScale = 1});
 	} else if (ctx.GameState->CurrentBattle.Enemies.size() == 3) {
-		*enemyRow += ctx.GameState->CurrentBattle.Enemies.at(0)->GenerateComponent(ctx, {.WidthScale = .3, .HeightScale = .9, .DefaultColor = ctx.Colors.EnemyBackground});
-		*enemyRow += ctx.GameState->CurrentBattle.Enemies.at(1)->GenerateComponent(ctx, {.WidthScale = .3, .HeightScale = .9, .DefaultColor = ctx.Colors.EnemyBackground});
-		*enemyRow += ctx.GameState->CurrentBattle.Enemies.at(2)->GenerateComponent(ctx, {.WidthScale = .3, .HeightScale = .9, .DefaultColor = ctx.Colors.EnemyBackground});
+		*enemyRow += ctx.GameState->CurrentBattle.Enemies.at(0)->GenerateComponent(ctx, {.WidthScale = .3, .HeightScale = .9, .DefaultColor = ctx.Colors.EnemyBackground})->Register(ctx, "CombatEnemy1");
+		*enemyRow += ctx.GameState->CurrentBattle.Enemies.at(1)->GenerateComponent(ctx, {.WidthScale = .3, .HeightScale = .9, .DefaultColor = ctx.Colors.EnemyBackground})->Register(ctx, "CombatEnemy2");
+		*enemyRow += ctx.GameState->CurrentBattle.Enemies.at(2)->GenerateComponent(ctx, {.WidthScale = .3, .HeightScale = .9, .DefaultColor = ctx.Colors.EnemyBackground})->Register(ctx, "CombatEnemy3");
 	}
 
 	auto statusEffectsColumn = new VerticalPanel(ctx, {.WidthScale = .05, .HeightScale = 1});
@@ -94,17 +86,19 @@ Component* Menu::CreateCombatMenu(Context& ctx) {
 		}
 	}
 
-	// Experience Bar
+	// Health Bar
 	auto innerHealthBar = new HorizontalPanel(ctx, {.WidthScale = 1, .HeightScale = 1});
 	*healthBar += innerHealthBar;
-	*innerHealthBar += new Label(ctx, TextFormat("Health %i/%i", ctx.GameState->CurrentRun.PlayerCharacter.CurrentHealth, ctx.GameState->CurrentRun.PlayerCharacter.Health), {.WidthScale = .1, .HeightScale = .95, .DefaultColor = WHITE});
-	*innerHealthBar += new HorizontalPanel(ctx, {.WidthScale = .85, .HeightScale = 1});
+	*innerHealthBar += new FunctionLabel(ctx, {.WidthScale = .2, .HeightScale = .95, .DefaultColor = WHITE}, "Health 0000/0000",
+		[](Context& ctx) -> std::string { return TextFormat("Health %i/%i", ctx.GameState->CurrentRun.PlayerCharacter.CurrentHealth, ctx.GameState->CurrentRun.PlayerCharacter.Health); });
+	*innerHealthBar += new HorizontalPanel(ctx, {.WidthScale = .75, .HeightScale = 1});
 
 	// Experience Bar
 	auto innerEXPBar = new HorizontalPanel(ctx, {.WidthScale = 1, .HeightScale = 1});
 	*experienceBar += innerEXPBar;
-	*innerEXPBar += new Label(ctx, TextFormat("Level %i", ctx.GameState->CurrentRun.PlayerCharacter.Level(ctx)), {.WidthScale = .1, .HeightScale = .95, .DefaultColor = WHITE});
-	*innerEXPBar += new HorizontalPanel(ctx, {.WidthScale = .85, .HeightScale = 1});
+	*innerEXPBar += new FunctionLabel(ctx, {.WidthScale = .13, .HeightScale = .95, .DefaultColor = WHITE}, "Level 000",
+		[](Context& ctx) -> std::string { return TextFormat("Level %i",ctx.GameState->CurrentRun.PlayerCharacter.Level(ctx)); });
+	*innerEXPBar += new HorizontalPanel(ctx, {.WidthScale = .82, .HeightScale = 1});
 
 	// Rune Row
 	auto runeCol1 = new VerticalPanel(ctx, {.WidthScale = .33, .HeightScale = 1});

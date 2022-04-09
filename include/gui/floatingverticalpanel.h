@@ -4,14 +4,14 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-#ifndef PROGRESSBAR_H
-#define PROGRESSBAR_H
+#ifndef FLOATINGVERTICALPANEL_H
+#define FLOATINGVERTICALPANEL_H
 #include "context.h"
 #include "component.h"
 
-class ProgressBar : public Component {
+class FloatingVerticalPanel : public Component {
 public:
-	ProgressBar(Context& ctx, const Component::Options& options, int* maxValue, int* currentValue);
+	FloatingVerticalPanel(Context& ctx, const Component::Options& options, float startX, float startY, float riseAmount);
 	int Width(Context& ctx) override;
 	int Height(Context& ctx) override;
 
@@ -19,13 +19,15 @@ protected:
 	void Draw(Context& ctx) override;
 
 private:
-	int* maxValue;
-	int* currentValue;
-	int lastCurrentValue;
-	double fromValue;
-	double targetTime;
+	unsigned char parentAlpha(Context& ctx);
 
-	const double duration = 0.25;
+private:
+	double targetTime;
+	float startX;
+	float startY;
+	float riseAmount;
+
+	const float duration = 1;
 };
 
-#endif //PROGRESSBAR_H
+#endif //FLOATINGVERTICALPANEL_H

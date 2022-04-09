@@ -9,9 +9,14 @@
 #include "raylib/raylib.h"
 #include "vector"
 #include "string"
+#include "set"
+#include "map"
 
 // GetRandomDouble returns a double between 0.0 and 1.0 inclusive.
 double GetRandomDouble();
+double GetRandomRange(double min, double max);
+int GetRandomRange(int min, int max);
+double* GetRandomDistribution(double amountToDistribute, int arraySize);
 std::string GetRuneName();
 std::string GetEnemyName();
 
@@ -26,6 +31,11 @@ public:
 	void Initialize();
 	void Update();
 	void Draw();
+	void AddAnimation(Component* component);
+	void RemoveAnimation(Component* component);
+	Component* GetComponent(std::string name);
+	void RegisterComponent(std::string name, Component* component);
+	void UnregisterComponent(std::string name);
 
 	struct Menus {
 		friend class Context;
@@ -115,6 +125,9 @@ public:
 	Menus Menu;
 	State* GameState;
 	float Volume = 1;
+	std::set<Component*> anims;
+	std::vector<Component*> animsToDelete;
+	std::map<std::string, Component*> byName;
 };
 
 #endif //CONTEXT_H

@@ -23,6 +23,8 @@ public:
 	virtual void Update(Context& ctx);
 	virtual void OnClick(Context& ctx);
 	Component* AddChild(Component* child);
+	Component* Register(Context& ctx, std::string name);
+	Component* Unregister(Context& ctx);
 	void DrawComponent(Context& ctx, int x, int y);
 	bool IsMouseOver(Context& ctx);
 	bool IsMouseDown(Context& ctx);
@@ -62,6 +64,8 @@ protected:
 private:
 	int x = 0;
 	int y = 0;
+	std::string registeredName;
+	Context* registeredContext = nullptr;
 };
 
 #endif //COMPONENT_H

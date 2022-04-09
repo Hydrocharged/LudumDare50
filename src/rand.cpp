@@ -1069,6 +1069,29 @@ double GetRandomDouble() {
 	return dist(mt);
 }
 
+double GetRandomRange(double min, double max) {
+	auto amount = GetRandomDouble();
+	return ((max - min) * amount) + min;
+}
+
+int GetRandomRange(int min, int max) {
+	auto amount = GetRandomDouble();
+	return (int)round((max - min) * amount) + min;
+}
+
+double* GetRandomDistribution(double amountToDistribute, int arraySize) {
+	double* arr = new double[arraySize];
+	double total = 0;
+	for (int i = 0; i < arraySize; i++) {
+		arr[i] = GetRandomDouble();
+		total += arr[i];
+	}
+	for (int i = 0; i < arraySize; i++) {
+		arr[i] = (arr[i] / total) * amountToDistribute;
+	}
+	return arr;
+}
+
 std::string GetRuneName() {
 	std::string name = preStrs[(int)(94.0 * GetRandomDouble())] + postStr[(int)(854.0 * GetRandomDouble())];
 	if (GetRandomDouble() <= 0.5) {
